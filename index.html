@@ -10,9 +10,12 @@
   <meta property="og:image" content="./assets/hero.jpg">
   <title>EVESEL 이브셀 | 헤어 제품 전문 제조</title>
   <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./css/experience.css">
   <script defer src="./js/main.js"></script>
+  <script defer src="./js/experience.js"></script>
 </head>
 <body>
+  <div class="scroll-progress" aria-hidden="true"></div>
   <a class="skip-link" href="#main">본문으로 바로가기</a>
   <header class="site-header" id="header">
     <div class="header-inner">
@@ -54,6 +57,10 @@
 
   <main id="main">
     <section id="top" class="hero" aria-labelledby="hero-title">
+      <video class="hero-video" autoplay muted loop playsinline preload="metadata"
+             poster="./assets/hero-poster.webp" aria-hidden="true" tabindex="-1">
+        <source src="./assets/hero-loop.mp4" type="video/mp4">
+      </video>
       <div class="hero-overlay"></div>
       <div class="hero-content wide">
         <h1 id="hero-title" data-ko="헤어 제품의 완성도는<br>제조의 기준에서 시작됩니다." data-en="Great hair products<br>begin with manufacturing excellence.">헤어 제품의 완성도는<br>제조의 기준에서 시작됩니다.</h1>
@@ -67,24 +74,20 @@
         <h2 id="brand-title" data-ko="헤어를 만드는 기술,<br>신뢰를 쌓아온 시간." data-en="Crafted with expertise.<br>Trusted through time.">헤어를 만드는 기술,<br>신뢰를 쌓아온 시간.</h2>
         <p>SINCE 1989 <span class="slash">/</span> <span data-ko="헤어 전문 제조의 경험을 이어갑니다." data-en="A legacy of professional hair manufacturing.">헤어 전문 제조의 경험을 이어갑니다.</span></p>
       </div>
-      <div class="product-marquee" aria-label="이브셀 제품 이미지 자동 롤링">
-        <div class="marquee-track" id="marquee-track">
-          <div class="marquee-set">
-            <img src="./assets/product-01.png" alt="헤어 제품 01" loading="lazy">
-            <img src="./assets/product-02.png" alt="헤어 제품 02" loading="lazy">
-            <img src="./assets/product-03.png" alt="헤어 제품 03" loading="lazy">
-            <img src="./assets/product-04.png" alt="헤어 제품 04" loading="lazy">
-            <img src="./assets/product-05.png" alt="헤어 제품 05" loading="lazy">
-            <img src="./assets/product-06.png" alt="헤어 제품 06" loading="lazy">
-            <img src="./assets/product-07.png" alt="헤어 제품 07" loading="lazy">
-            <img src="./assets/product-08.png" alt="헤어 제품 08" loading="lazy">
-            <img src="./assets/product-09.png" alt="헤어 제품 09" loading="lazy">
-            <img src="./assets/product-10.png" alt="헤어 제품 10" loading="lazy">
-            <img src="./assets/product-11.png" alt="헤어 제품 11" loading="lazy">
-            <img src="./assets/product-12.png" alt="헤어 제품 12" loading="lazy">
+      <div class="palette-gallery" id="palette-gallery">
+        <div class="palette-intro">
+          <div>
+            <div class="palette-eyebrow">CURATED PRODUCT PALETTE</div>
+            <p class="palette-description" data-ko="제품의 컬러와 개성을 따라 만나보는 이브셀 컬렉션.<br>좌우로 넘겨 다양한 제품을 살펴보세요." data-en="Discover EVESEL's product collection by colour.<br>Swipe or use the arrows to explore.">제품의 컬러와 개성을 따라 만나보는 이브셀 컬렉션.<br>좌우로 넘겨 다양한 제품을 살펴보세요.</p>
+          </div>
+          <div class="palette-controls" aria-label="제품 그룹 탐색">
+            <button type="button" class="palette-step" data-direction="-1" aria-label="이전 컬러 제품">←</button>
+            <span class="palette-current" id="palette-current">01 / 05</span>
+            <button type="button" class="palette-step" data-direction="1" aria-label="다음 컬러 제품">→</button>
           </div>
         </div>
       </div>
+      <div class="palette-dots" id="palette-dots" aria-label="컬러 그룹 바로가기"></div>
     </section>
 
     <section class="portfolio-section" id="portfolio" aria-labelledby="portfolio-title">
@@ -157,6 +160,7 @@
     </section>
   </main>
 
+  <a class="back-to-top" href="#top" aria-label="맨 위로 이동">↑</a>
   <footer class="site-footer">
     <div class="footer-main narrow">
       <div class="footer-company">
