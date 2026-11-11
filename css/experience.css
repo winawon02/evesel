@@ -3,8 +3,8 @@
    No motion on site header/footer. */
 :root{
   --motion-ease:cubic-bezier(.18,.72,.22,1);
-  --motion-duration:760ms;
-  --curtain-duration:940ms;
+  --motion-duration:1100ms;
+  --curtain-duration:1400ms;
 }
 /* Common timing utilities. Applied to every animation type. */
 .delay-0{--motion-delay:0ms}
@@ -81,7 +81,7 @@
 .portfolio-card>img{
   position:absolute;inset:0;width:100%;height:100%;object-fit:cover;visibility:visible;opacity:1;
   transform:scale(1.07);
-  transition:clip-path var(--curtain-duration) cubic-bezier(.72,0,.2,1),transform 1.25s var(--motion-ease);
+  transition:clip-path var(--curtain-duration) cubic-bezier(.65,0,.25,1),transform 1.6s var(--motion-ease);
   transition-delay:var(--motion-delay,0ms)
 }
 .motion-ready .portfolio-card.motion--curtain:nth-child(odd):not(.is-visible)>img{clip-path:inset(0 0 100% 0)}
@@ -89,11 +89,11 @@
 .portfolio-card.motion--curtain.is-visible>img{clip-path:inset(0);transform:scale(1)}
 .portfolio-card:hover>img{transform:scale(1.055)}
 .portfolio-overlay{z-index:2;pointer-events:none}
-.motion-ready .motion--curtain .portfolio-overlay{opacity:0;transition:opacity .4s ease;transition-delay:var(--motion-delay,0ms)}
+.motion-ready .motion--curtain .portfolio-overlay{opacity:0;transition:opacity .8s ease;transition-delay:var(--motion-delay,0ms)}
 .motion-ready .motion--curtain.is-visible .portfolio-overlay{opacity:1}
 .portfolio-content{
   top:50%;bottom:auto;z-index:4;transform:translateY(-50%);
-  transition:opacity .6s var(--motion-ease),transform .6s var(--motion-ease)
+  transition:opacity .92s var(--motion-ease),transform .95s var(--motion-ease)
 }
 .motion-ready .motion--curtain .portfolio-content{opacity:0;transform:translateY(calc(-50% + 16px));transition-delay:var(--motion-delay,0ms)}
 .motion-ready .motion--curtain.is-visible .portfolio-content{
@@ -108,13 +108,13 @@
 }
 .portfolio-card.motion--curtain.is-visible:not(:last-child)::after{
   opacity:1;transform:scaleY(1);
-  transition-delay:calc(var(--motion-delay,0ms) + 720ms)
+  transition-delay:calc(var(--motion-delay,0ms) + 1080ms)
 }
 /* Motion type 4 — one group trigger; staggered children are NOT observed separately.
    Short, reusable delay classes keep the final CTA prompt. */
 .motion-ready .motion--group .motion--stagger{
   opacity:0;transform:translate3d(0,30px,0);
-  transition:opacity 700ms var(--motion-ease),transform 730ms var(--motion-ease);
+  transition:opacity 980ms var(--motion-ease),transform 1050ms var(--motion-ease);
   transition-delay:var(--motion-delay,0ms)
 }
 .motion-ready .motion--group.is-visible .motion--stagger{opacity:1;transform:none}

@@ -1,5 +1,5 @@
 /* EVESEL motion engine: reusable CSS types / delay classes only.
-   Normal motion uses 50vh; the photo panels reveal at their IMAGE top reaching 90vh.
+   Normal motion uses 50vh; the photo panels reveal at their IMAGE top reaching 70vh.
    OEM/ODM is triggered once as a group, so the CTA never waits independently. */
 (() => {
   'use strict';
@@ -47,7 +47,7 @@
   if (motionEnabled) document.documentElement.classList.add('motion-ready');
 
   // Generic text/media starts at the viewport midpoint. Category curtains
-  // start when each IMAGE top reaches 90vh, irrespective of heading position.
+  // start when each IMAGE top reaches 70vh, irrespective of heading position.
   // Panels in one row trigger simultaneously; mobile rows trigger separately.
   const revealAtScrollPosition = () => {
     if (!motionEnabled) return;
@@ -59,7 +59,7 @@
     for (const card of photoPanels) {
       if (card.classList.contains('is-visible')) continue;
       const photo = card.querySelector('img');
-      if (photo && photo.getBoundingClientRect().top <= innerHeight * .9)
+      if (photo && photo.getBoundingClientRect().top <= innerHeight * .7)
         card.classList.add('is-visible');
     }
   };
