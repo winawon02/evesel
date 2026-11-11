@@ -89,7 +89,7 @@
     button.addEventListener("click", () => setLanguage(button.dataset.lang));
   });
 
-  // Duplicate one complete product set for a gapless 42-second CSS marquee.
+  // Duplicate the complete product set for a seamless CSS marquee.
   if (marquee && marquee.firstElementChild) {
     const copy = marquee.firstElementChild.cloneNode(true);
     copy.setAttribute("aria-hidden", "true");
@@ -97,18 +97,8 @@
     marquee.appendChild(copy);
   }
 
-  if ("IntersectionObserver" in window && !reducedMotion.matches) {
-    const revealObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("shown");
-          revealObserver.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.07, rootMargin: "0px 0px 60px 0px" });
-    document.querySelectorAll(".reveal").forEach(el => revealObserver.observe(el));
-    document.documentElement.classList.add("js-ready");
-  }
+  // Section entrance effects are coordinated by experience.js using the viewport center band.
+  // Header and footer remain static; do not start an early reveal observer here.
 
   window.addEventListener("scroll", syncHeader, { passive: true });
   window.addEventListener("resize", () => {

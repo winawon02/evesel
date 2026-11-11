@@ -95,3 +95,87 @@
   .motion-enabled .motion-item,.motion-enabled .motion-item.motion-clip{opacity:1!important;clip-path:none!important;transform:none!important}
   .split-photo img,.manufacturing-card>img,.manufacturing-bg{transform:none!important}
 }
+
+
+/* === 2026-11-11: viewport-height hero + central-band entrances + curtain reveals === */
+/* Display-height hero: remove old 940px, 660px and 650px minimums on ALL breakpoints. */
+.hero{height:100vh;height:100svh;min-height:0;max-height:none}
+.hero-content{bottom:clamp(104px,14svh,160px)}
+
+/* Header / footer never participate in entrance animations or scroll-driven transitions.
+   Hamburger state remains functional but switches immediately. */
+.site-header,.site-header *, .site-footer,.site-footer *{animation:none!important;transition:none!important}
+.site-footer,.site-footer *{opacity:1}
+
+/* Entrance animations are controlled by the centralized viewport-band observer. */
+.motion-enabled .brand-heading h2.motion-item{
+  opacity:0;filter:blur(7px);transform:translate3d(0,78px,0);
+  transition:opacity 1.05s var(--motion-ease),transform 1.15s var(--motion-ease),filter 1.15s var(--motion-ease);
+}
+.motion-enabled .brand-heading h2.motion-item.is-visible{
+  opacity:1;filter:blur(0);transform:translate3d(0,0,0);
+}
+.motion-enabled .brand-heading p.motion-item{
+  opacity:0;transform:translate3d(0,34px,0);
+  transition:opacity .85s var(--motion-ease),transform 1s var(--motion-ease);
+  transition-delay:.18s;
+}
+.motion-enabled .brand-heading p.motion-item.is-visible{opacity:1;transform:none}
+.motion-enabled .portfolio-heading h2.motion-item{
+  opacity:0;transform:translate3d(0,58px,0);
+  transition:opacity 1s var(--motion-ease),transform 1.1s var(--motion-ease);
+}
+.motion-enabled .portfolio-heading h2.motion-item.is-visible{opacity:1;transform:none}
+
+/* Curtain is an actual opaque layer that slides toward the right, revealing the photo.
+   No-JS / reduced-motion path defaults to photos fully visible. */
+.portfolio-card{isolation:isolate}
+.portfolio-card::before{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:#e9eef0;transform:scaleX(0);transform-origin:right center;
+}
+.motion-enabled .portfolio-card::before{
+  transform:scaleX(1);
+  transition:transform 1.35s cubic-bezier(.76,0,.19,1);
+  transition-delay:var(--curtain-delay,0ms);
+}
+.motion-enabled .portfolio-card.is-visible::before{transform:scaleX(0)}
+.portfolio-card>img{transform:scale(1.105);transition:transform 1.65s var(--motion-ease)}
+.portfolio-card.is-visible>img{transform:scale(1.01)}
+.portfolio-card:hover>img{transform:scale(1.08)}
+.portfolio-content{
+  top:50%;bottom:auto;transform:translateY(-50%);
+  z-index:4;transition:transform .65s var(--motion-ease),opacity .75s var(--motion-ease);
+}
+.portfolio-card:hover .portfolio-content{transform:translateY(calc(-50% - 8px))}
+.motion-enabled .portfolio-card .portfolio-content{
+  opacity:0;transform:translateY(calc(-50% + 20px));
+  transition:opacity .7s var(--motion-ease),transform .85s var(--motion-ease);
+}
+.motion-enabled .portfolio-card.is-visible .portfolio-content{
+  opacity:1;transform:translateY(-50%);
+  transition-delay:calc(var(--curtain-delay,0ms) + .58s);
+}
+.motion-enabled .portfolio-card.is-visible:hover .portfolio-content{
+  transform:translateY(calc(-50% - 8px));
+}
+/* No motion on category captions until the curtain actually uncovers them. */
+.portfolio-overlay{z-index:1}
+
+@media(max-width:600px){
+  .hero{height:100svh;min-height:0}
+  .hero-content{bottom:clamp(112px,20svh,165px)}
+  .motion-enabled .portfolio-card{--curtain-delay:0ms!important}
+}
+@media(prefers-reduced-motion:reduce){
+  .hero{height:100svh;min-height:0}
+  .motion-enabled .brand-heading h2.motion-item,
+  .motion-enabled .brand-heading p.motion-item,
+  .motion-enabled .portfolio-heading h2.motion-item{
+    opacity:1!important;filter:none!important;transform:none!important;transition:none!important
+  }
+  .portfolio-card::before{display:none!important}
+  .motion-enabled .portfolio-card .portfolio-content{
+    opacity:1!important;transform:translateY(-50%)!important;transition:none!important
+  }
+}
