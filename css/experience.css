@@ -225,3 +225,103 @@
   .portfolio-card:not(:last-child)::after{opacity:1!important;transform:none!important;transition:none!important}
   .portfolio-content,.motion-enabled .portfolio-card .portfolio-content{opacity:1!important;transform:translateY(-50%)!important;transition:none!important}
 }
+
+/* 2026-11-11: Clean white before the photographic reveal.
+   Do not display the old blurred pre-image or colored panel. */
+.portfolio-card{background:#fff!important}
+.portfolio-card::before{display:none!important;background:none!important}
+.motion-enabled .portfolio-card .portfolio-overlay{opacity:0;transition:opacity .45s ease}
+.motion-enabled .portfolio-card.is-visible .portfolio-overlay{
+  opacity:1;transition-delay:calc(var(--curtain-delay,0ms) + .58s)
+}
+/* Initial state remains plain white: photos are fully clipped and copy is hidden.
+   Unanimated / accessibility fallback continues to show the real photo. */
+.motion-enabled .portfolio-card:nth-child(odd):not(.is-visible)>img{clip-path:inset(0 0 100% 0)}
+.motion-enabled .portfolio-card:nth-child(even):not(.is-visible)>img{clip-path:inset(100% 0 0 0)}
+/* Only the original photo is uncovered. Dividers appear after the reveal. */
+.portfolio-card:not(:last-child)::after{opacity:0}
+.motion-enabled .portfolio-card:not(:last-child).is-visible::after{
+  opacity:1;transition-delay:calc(var(--curtain-delay,0ms) + 1.16s)
+}
+
+/* Header proportions from the preserved EVESEL/Penpot header prototype:
+   true horizontal centering independent of the logo / language+menu widths. */
+.site-header .header-inner{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) max-content minmax(0,1fr);
+  align-items:center;
+  gap:clamp(16px,2vw,32px);
+  padding-inline:clamp(28px,4.5vw,86px)
+}
+.site-header .brand-logo{justify-self:start;flex:none;width:126px;height:82px}
+.site-header .desktop-nav{
+  display:flex;justify-self:center;
+  margin:0;gap:clamp(18px,2.65vw,49px)
+}
+.site-header .desktop-nav a{font-size:18px;font-weight:500}
+.site-header .header-actions{
+  justify-self:end;margin:0;gap:19px
+}
+.site-header .language-switch{
+  height:46px;border-width:1.5px;border-radius:32px;
+  padding:3px;gap:2px
+}
+.site-header .language-switch button{
+  height:38px;min-width:38px;padding:0 3px;
+  font-size:14px;font-weight:700;border-radius:50%
+}
+.site-header .menu-toggle{
+  width:46px;height:46px;border-width:1.5px;gap:7px
+}
+.site-header .menu-toggle span{width:22px;height:1.5px}
+.site-header.open .menu-toggle span:first-child{transform:translateY(8.5px) rotate(45deg)}
+.site-header.open .menu-toggle span:last-child{transform:translateY(-8.5px) rotate(-45deg)}
+/* Main section 04: text enters in the actual reading order instead of
+   moving the entire parent while the button runs independently. */
+.motion-enabled .oem-section .split-copy{transform:none!important;opacity:1!important}
+.motion-enabled .oem-section .oem-step{
+  opacity:0;transform:translate3d(0,38px,0);
+  filter:blur(3px);
+  transition:opacity .85s var(--motion-ease),transform .95s var(--motion-ease),filter .95s var(--motion-ease);
+  transition-delay:var(--oem-stage-delay,0ms)
+}
+.motion-enabled .oem-section .oem-step.is-visible{
+  opacity:1;transform:none;filter:none
+}
+/* Keep the CTA's hover reaction while it receives its own final reveal. */
+.motion-enabled .oem-section .outline-button.oem-step:hover{background:#1d292f;color:white}
+@media(max-width:1300px) and (min-width:1024px){
+  .site-header .header-inner{gap:14px;padding-inline:clamp(22px,3vw,44px)}
+  .site-header .brand-logo{width:108px;height:76px}
+  .site-header .desktop-nav{gap:clamp(12px,1.4vw,19px)}
+  .site-header .desktop-nav a{font-size:clamp(13px,1.2vw,16px)}
+  .site-header .header-actions{gap:12px}
+  .site-header .language-switch{height:40px}
+  .site-header .language-switch button{height:32px;min-width:32px;font-size:12px}
+  .site-header .menu-toggle{width:40px;height:40px;gap:6px}
+  .site-header .menu-toggle span{width:19px}
+}
+@media(max-width:1023px){
+  .site-header .header-inner{
+    display:grid;grid-template-columns:minmax(0,1fr) max-content;
+    padding-inline:24px;gap:12px
+  }
+  .site-header .desktop-nav{display:none}
+  .site-header .brand-logo{width:112px;height:70px}
+  .site-header .header-actions{gap:12px}
+  .site-header .language-switch{height:38px;padding:3px}
+  .site-header .language-switch button{height:30px;min-width:30px;font-size:12px}
+  .site-header .menu-toggle{width:38px;height:38px;gap:5px}
+  .site-header .menu-toggle span{width:19px;height:1.5px}
+  .site-header.open .menu-toggle span:first-child{transform:translateY(6.5px) rotate(45deg)}
+  .site-header.open .menu-toggle span:last-child{transform:translateY(-6.5px) rotate(-45deg)}
+}
+@media(max-width:600px){
+  .site-header .header-inner{padding-inline:16px}
+  .site-header .brand-logo{width:96px;height:66px}
+  .site-header .header-actions{gap:10px}
+}
+@media(prefers-reduced-motion:reduce){
+  .motion-enabled .portfolio-card .portfolio-overlay{opacity:1!important;transition:none!important}
+  .motion-enabled .oem-section .oem-step{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
+}

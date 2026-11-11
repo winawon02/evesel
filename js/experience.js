@@ -48,13 +48,20 @@
   const revealSelectors = [
     '.brand-heading h2', '.brand-heading p', '.product-marquee',
     '.portfolio-heading h2',
-    '.oem-section .split-photo', '.oem-section .split-copy', '.oem-option',
+    '.oem-section .split-photo',
     '.manufacturing-inner h2', '.manufacturing-card',
     '.research-section .split-photo', '.research-section .split-copy',
     '.contact-inner'
   ];
   const reveals = [...new Set(revealSelectors.flatMap(selector =>
     Array.from(document.querySelectorAll(selector))))];
+  const oemSteps = [
+    '.oem-section .split-copy > h2',
+    '.oem-section .split-copy > .section-description',
+    '.oem-section .oem-option:first-child',
+    '.oem-section .oem-option:last-child',
+    '.oem-section .split-copy > .outline-button'
+  ].map(selector=>document.querySelector(selector)).filter(Boolean);
   const categories = Array.from(document.querySelectorAll('.portfolio-card'));
   const categoryMarkers=categories.map(card=>{
     const marker=document.createElement('span');
@@ -71,6 +78,12 @@
       if (element.matches('.split-photo')) element.classList.add('motion-clip');
       element.style.setProperty('--motion-delay', (element.matches('.brand-heading p') ? 165 : (i % 3) * 85) + 'ms');
     });
+    // The OEM header, description, two services and button animate independently.
+    // Each stage waits until it reaches the central viewport band; the CTA is last.
+    oemSteps.forEach((el,i)=>{
+      el.classList.add('oem-step');
+      el.style.setProperty('--oem-stage-delay', [0,130,240,360,520][i]+'ms');
+    });
     categories.forEach((card,i) => card.style.setProperty('--curtain-delay', (i * 135) + 'ms'));
     document.documentElement.classList.add('motion-enabled');
 
@@ -82,7 +95,7 @@
         entranceObserver.unobserve(entry.target);
       }
     }, observerOptions);
-    for (const element of reveals) entranceObserver.observe(element);
+    for (const element of [...reveals,...oemSteps]) entranceObserver.observe(element);
     // Observe the center of each large panel, not its upper visible edge.
     const curtainObserver = new IntersectionObserver(entries => {
       entries.forEach(entry => {
@@ -110,7 +123,7 @@
     topLink?.classList.toggle('visible', y > 1100);
     if (!reducedMotion.matches) {
       if (motionAllowed && hasObserver) {
-        reveals.forEach(revealAtCenter);
+        [...reveals,...oemSteps].forEach(revealAtCenter);
         categories.forEach(card => {
           if (card.classList.contains('is-visible')) return;
           const b=card.getBoundingClientRect();
