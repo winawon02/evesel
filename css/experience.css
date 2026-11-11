@@ -41,6 +41,7 @@
 }
 .site-header .desktop-nav{display:flex;justify-self:center;margin:0;gap:clamp(18px,2.65vw,49px)}
 .site-header .desktop-nav a{font-size:18px;font-weight:500}
+.site-header .desktop-nav .nav-submenu a{font-size:15px;font-weight:500}
 .site-header .header-actions{justify-self:end;margin:0;gap:19px}
 .site-header .language-switch{height:46px;border-width:1.5px;border-radius:32px;padding:3px;gap:2px}
 .site-header .language-switch button{height:38px;min-width:38px;padding:0 3px;font-size:14px;font-weight:700;border-radius:50%}
@@ -56,7 +57,7 @@
 .marquee-track{display:flex;width:max-content;animation:products 148s linear infinite;will-change:transform}
 .marquee-set{display:flex;flex:0 0 auto;align-items:center;gap:38px;padding-right:38px}
 .marquee-set img{display:block;height:266px;width:auto;max-width:none;object-fit:contain;flex:0 0 auto}
-.product-marquee:hover .marquee-track,.product-marquee:focus-within .marquee-track,.product-marquee.marquee-paused .marquee-track{animation-play-state:paused}
+.product-marquee.marquee-paused .marquee-track{animation-play-state:paused}
 .product-marquee:focus-visible{outline:2px solid #658b98;outline-offset:-3px}
 @keyframes products{to{transform:translateX(-50%)}}
 /* Motion type 1 — generic text/card reveal. */

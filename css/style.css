@@ -21,21 +21,37 @@ a:focus-visible,button:focus-visible{outline:3px solid #78bfd6;outline-offset:3p
 .wide{padding-inline:var(--side)}
 .narrow{width:min(calc(100% - 48px),1540px);margin-inline:auto}
 .site-header{position:fixed;top:0;left:0;right:0;height:var(--header-height);z-index:100;color:white;transition:background .3s,color .3s,box-shadow .3s}
-.site-header.scrolled,.site-header.open{color:var(--ink);background:rgba(255,255,255,.97);box-shadow:0 1px 0 rgba(0,0,0,.08);backdrop-filter:blur(15px)}
+.site-header.scrolled,.site-header.open,.site-header.nav-active{color:var(--ink);background:rgba(255,255,255,.97);box-shadow:0 1px 0 rgba(0,0,0,.08);backdrop-filter:blur(15px)}
 .header-inner{height:100%;display:flex;align-items:center;gap:24px;padding-inline:var(--side)}
 .brand-logo{flex:0 0 96px;height:66px;position:relative}
 .brand-logo img{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;transition:opacity .2s}
 .brand-logo .logo-dark{opacity:0}
-.scrolled .brand-logo .logo-dark,.open .brand-logo .logo-dark{opacity:1}
-.scrolled .brand-logo .logo-white,.open .brand-logo .logo-white{opacity:0}
+.scrolled .brand-logo .logo-dark,.open .brand-logo .logo-dark,.nav-active .brand-logo .logo-dark{opacity:1}
+.scrolled .brand-logo .logo-white,.open .brand-logo .logo-white,.nav-active .brand-logo .logo-white{opacity:0}
 .desktop-nav{margin:auto;display:flex;align-items:center;gap:clamp(16px,2.3vw,46px)}
 .desktop-nav a{font-size:18px;font-weight:600;white-space:nowrap}
 .desktop-nav a:hover{opacity:.65}
+.desktop-nav{height:100%}
+.desktop-nav > a,.desktop-nav > .nav-item{height:100%;display:flex;align-items:center;justify-content:center}
+.desktop-nav .nav-item{position:relative}
+.desktop-nav .nav-submenu{
+  position:absolute;top:calc(100% - 1px);left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;gap:2px;min-width:190px;padding:13px 11px;
+  color:var(--ink);background:#fff;border:1px solid #e4e9eb;border-top:0;
+  box-shadow:0 18px 32px rgba(17,38,47,.13);
+  opacity:0;visibility:hidden;pointer-events:none;z-index:110
+}
+.desktop-nav .nav-item.is-open .nav-submenu{opacity:1;visibility:visible;pointer-events:auto}
+.desktop-nav .nav-submenu a{display:block;width:100%;padding:11px 15px;font-size:15px;font-weight:500;line-height:1.4;white-space:nowrap;border-radius:3px}
+.desktop-nav .nav-submenu a:hover,.desktop-nav .nav-submenu a:focus-visible{background:#f2f5f6;color:#1b292e;opacity:1}
+#category-color,#category-perm,#category-care,#category-styling,
+#oem-contract,#odm-development,
+#manufacturing-production,#manufacturing-filling,#manufacturing-packaging{scroll-margin-top:calc(var(--header-height) + 24px)}
 .header-actions{margin-left:auto;display:flex;align-items:center;gap:14px}
 .language-switch{display:flex;align-items:center;gap:1px;border:1px solid currentColor;border-radius:30px;height:32px;padding:2px}
 .language-switch button{height:26px;min-width:26px;padding:0 4px;border:0;border-radius:50%;background:transparent;color:inherit;font-weight:700;font-size:12px}
 .language-switch button.active{background:white;color:#1b2428}
-.scrolled .language-switch button.active,.open .language-switch button.active{background:#1b2428;color:white}
+.scrolled .language-switch button.active,.open .language-switch button.active,.nav-active .language-switch button.active{background:#1b2428;color:white}
 .menu-toggle{width:44px;height:44px;flex-shrink:0;border:1px solid currentColor;color:inherit;border-radius:50%;background:transparent;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:4px;position:relative;z-index:120}
 .menu-toggle span{width:15px;height:1px;background:currentColor;display:block;transition:transform .25s,opacity .25s}
 .open .menu-toggle span:first-child{transform:translateY(5px) rotate(45deg)}
@@ -70,7 +86,6 @@ body.menu-open{overflow:hidden}
 .marquee-track{display:flex;width:max-content;animation:products 42s linear infinite;will-change:transform}
 .marquee-set{display:flex;flex:0 0 auto;gap:38px;align-items:center;padding-right:38px}
 .marquee-set img{height:266px;width:auto;max-width:none;object-fit:contain}
-.product-marquee:hover .marquee-track{animation-play-state:paused}
 @keyframes products{to{transform:translateX(-50%)}}
 
 /* 03. Product category portfolio */

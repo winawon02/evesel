@@ -6,8 +6,22 @@
   const drawer = document.getElementById("mobile-menu");
   const marquee = document.getElementById("marquee-track");
   const languageButtons = document.querySelectorAll("[data-lang]");
+  const desktopNav = document.querySelector(".desktop-nav");
+  const submenuGroups = [...document.querySelectorAll(".desktop-nav .has-submenu")];
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let menuOpen = false;
+  let activeSubmenu = null;
+
+  function setDesktopSubmenu(group) {
+    const next = window.innerWidth > 1023 ? group : null;
+    activeSubmenu = next;
+    submenuGroups.forEach(item => {
+      const active = item === next;
+      item.classList.toggle("is-open", active);
+      item.querySelector(":scope > a")?.setAttribute("aria-expanded", String(active));
+    });
+    header?.classList.toggle("nav-active", Boolean(next));
+  }
 
   function syncHeader() {
     if (header) header.classList.toggle("scrolled", window.scrollY > 40);
@@ -16,6 +30,7 @@
   function setMenu(open, restoreFocus = false) {
     if (!header || !drawer || !toggle) return;
     menuOpen = open;
+    if (open) setDesktopSubmenu(null);
     header.classList.toggle("open", open);
     drawer.classList.toggle("visible", open);
     document.body.classList.toggle("menu-open", open);
@@ -56,6 +71,32 @@
 
     document.addEventListener("click", event => {
       if (menuOpen && !drawer.contains(event.target) && !header.contains(event.target)) setMenu(false);
+    });
+  }
+
+  if (desktopNav && submenuGroups.length) {
+    submenuGroups.forEach(group => {
+      group.addEventListener("pointerenter", event => {
+        if (event.pointerType !== "touch") setDesktopSubmenu(group);
+      });
+      group.addEventListener("pointerleave", event => {
+        if (event.pointerType !== "touch" && activeSubmenu === group) setDesktopSubmenu(null);
+      });
+      group.addEventListener("focusin", () => setDesktopSubmenu(group));
+      group.addEventListener("focusout", () => {
+        requestAnimationFrame(() => {
+          if (activeSubmenu === group && !group.contains(document.activeElement)) setDesktopSubmenu(null);
+        });
+      });
+    });
+    desktopNav.addEventListener("click", event => {
+      if (event.target.closest("a")) setDesktopSubmenu(null);
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key !== "Escape" || !activeSubmenu) return;
+      event.preventDefault();
+      activeSubmenu.querySelector(":scope > a")?.focus({ preventScroll: true });
+      setDesktopSubmenu(null);
     });
   }
 
@@ -102,6 +143,7 @@
 
   window.addEventListener("scroll", syncHeader, { passive: true });
   window.addEventListener("resize", () => {
+    setDesktopSubmenu(null);
     if (window.innerWidth > 1023 && menuOpen) setMenu(false);
   }, { passive: true });
 

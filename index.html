@@ -9,9 +9,9 @@
   <meta property="og:description" content="헤어 제품의 완성도는 제조의 기준에서 시작됩니다.">
   <meta property="og:image" content="./assets/hero-poster.webp">
   <title>EVESEL 이브셀 | 헤어 제품 전문 제조</title>
-  <link rel="stylesheet" href="./css/style.css">
-  <link rel="stylesheet" href="./css/experience.css?v=20261111j">
-  <script defer src="./js/main.js"></script>
+  <link rel="stylesheet" href="./css/style.css?v=20261111k">
+  <link rel="stylesheet" href="./css/experience.css?v=20261111k">
+  <script defer src="./js/main.js?v=20261111k"></script>
   <script defer src="./js/experience.js?v=20261111h"></script>
 </head>
 <body>
@@ -25,9 +25,30 @@
       </a>
       <nav class="desktop-nav" aria-label="주 메뉴">
         <a href="#brand" data-ko="회사소개" data-en="About">회사소개</a>
-        <a href="#portfolio" data-ko="제품소개" data-en="Products">제품소개</a>
-        <a href="#oem">OEM/ODM</a>
-        <a href="#manufacturing" data-ko="생산역량" data-en="Manufacturing">생산역량</a>
+        <div class="nav-item has-submenu">
+          <a href="#portfolio" data-ko="제품소개" data-en="Products" aria-expanded="false" aria-controls="submenu-products">제품소개</a>
+          <div class="nav-submenu" id="submenu-products" role="group" aria-label="제품소개 하위 메뉴">
+            <a href="#category-color" data-ko="헤어칼라" data-en="Hair Color">헤어칼라</a>
+            <a href="#category-perm" data-ko="퍼머넌트" data-en="Permanent">퍼머넌트</a>
+            <a href="#category-care" data-ko="헤어케어" data-en="Hair Care">헤어케어</a>
+            <a href="#category-styling" data-ko="스타일링" data-en="Styling">스타일링</a>
+          </div>
+        </div>
+        <div class="nav-item has-submenu">
+          <a href="#oem" aria-expanded="false" aria-controls="submenu-oem">OEM/ODM</a>
+          <div class="nav-submenu" id="submenu-oem" role="group" aria-label="OEM/ODM 하위 메뉴">
+            <a href="#oem-contract" data-ko="OEM 위탁 생산" data-en="OEM Manufacturing">OEM 위탁 생산</a>
+            <a href="#odm-development" data-ko="ODM 개발 협업" data-en="ODM Development">ODM 개발 협업</a>
+          </div>
+        </div>
+        <div class="nav-item has-submenu">
+          <a href="#manufacturing" data-ko="생산역량" data-en="Manufacturing" aria-expanded="false" aria-controls="submenu-manufacturing">생산역량</a>
+          <div class="nav-submenu" id="submenu-manufacturing" role="group" aria-label="생산역량 하위 메뉴">
+            <a href="#manufacturing-production" data-ko="제조" data-en="Production">제조</a>
+            <a href="#manufacturing-filling" data-ko="충진" data-en="Filling">충진</a>
+            <a href="#manufacturing-packaging" data-ko="포장" data-en="Packaging">포장</a>
+          </div>
+        </div>
         <a href="#research" data-ko="연구분야" data-en="R&amp;D">연구분야</a>
         <a href="#contact" data-ko="문의하기" data-en="Contact">문의하기</a>
       </nav>
@@ -123,22 +144,22 @@
         <h2 class="motion--fade-up" id="portfolio-title" data-ko="헤어의 모든 순간에,<br>필요한 전문 제품." data-en="Professional products<br>for every hair moment.">헤어의 모든 순간에,<br>필요한 전문 제품.</h2>
       </div>
       <div class="portfolio-grid">
-        <a class="portfolio-card motion--curtain" href="#contact" aria-label="헤어칼라 제품 문의">
+        <a id="category-color" class="portfolio-card motion--curtain" href="#contact" aria-label="헤어칼라 제품 문의">
           <img src="./assets/category-color.jpg" alt="붉은 헤어칼라 비주얼" loading="eager" decoding="async">
           <span class="portfolio-overlay"></span>
           <span class="portfolio-content"><small>HAIR COLOR</small><strong data-ko="헤어칼라" data-en="Hair Color">헤어칼라</strong><span class="circle-arrow" aria-hidden="true">↗</span></span>
         </a>
-        <a class="portfolio-card motion--curtain" href="#contact" aria-label="퍼머넌트 제품 문의">
+        <a id="category-perm" class="portfolio-card motion--curtain" href="#contact" aria-label="퍼머넌트 제품 문의">
           <img src="./assets/category-perm.jpg" alt="웨이브 퍼머넌트 헤어 비주얼" loading="eager" decoding="async">
           <span class="portfolio-overlay"></span>
           <span class="portfolio-content"><small>PERMANENT</small><strong data-ko="퍼머넌트" data-en="Permanent">퍼머넌트</strong><span class="circle-arrow" aria-hidden="true">↗</span></span>
         </a>
-        <a class="portfolio-card motion--curtain" href="#contact" aria-label="헤어케어 제품 문의">
+        <a id="category-care" class="portfolio-card motion--curtain" href="#contact" aria-label="헤어케어 제품 문의">
           <img src="./assets/category-care.jpg" alt="윤기 있는 긴 머릿결" loading="eager" decoding="async">
           <span class="portfolio-overlay"></span>
           <span class="portfolio-content"><small>HAIR CARE</small><strong data-ko="헤어케어" data-en="Hair Care">헤어케어</strong><span class="circle-arrow" aria-hidden="true">↗</span></span>
         </a>
-        <a class="portfolio-card motion--curtain" href="#contact" aria-label="스타일링 제품 문의">
+        <a id="category-styling" class="portfolio-card motion--curtain" href="#contact" aria-label="스타일링 제품 문의">
           <img src="./assets/category-styling.jpg" alt="갈색 헤어 스타일링 비주얼" loading="eager" decoding="async">
           <span class="portfolio-overlay"></span>
           <span class="portfolio-content"><small>STYLING</small><strong data-ko="스타일링" data-en="Styling">스타일링</strong><span class="circle-arrow" aria-hidden="true">↗</span></span>
@@ -152,8 +173,8 @@
         <h2 class="motion--stagger delay-0" id="oem-title" data-ko="아이디어에서 제품까지,<br>함께 만드는 과정." data-en="From concept to product,<br>built together.">아이디어에서 제품까지,<br>함께 만드는 과정.</h2>
         <p class="section-description motion--stagger delay-1" data-ko="브랜드가 원하는 제품을 이해하고<br>개발·생산 조건을 구체화합니다." data-en="We understand your brand and define<br>development and manufacturing solutions.">브랜드가 원하는 제품을 이해하고<br>개발·생산 조건을 구체화합니다.</p>
         <div class="oem-options">
-          <div class="oem-option motion--stagger delay-2"><span class="oem-label">OEM</span><div><h3 data-ko="위탁 생산" data-en="Contract Manufacturing">위탁 생산</h3><p data-ko="요청 사양에 맞춰 생산 조건을 협의합니다." data-en="Production tailored to your specifications.">요청 사양에 맞춰 생산 조건을 협의합니다.</p></div></div>
-          <div class="oem-option motion--stagger delay-3"><span class="oem-label">ODM</span><div><h3 data-ko="개발 협업" data-en="Product Development">개발 협업</h3><p data-ko="제품 방향과 제형 개발 범위를 검토합니다." data-en="Collaborative product and formulation development.">제품 방향과 제형 개발 범위를 검토합니다.</p></div></div>
+          <div id="oem-contract" class="oem-option motion--stagger delay-2"><span class="oem-label">OEM</span><div><h3 data-ko="위탁 생산" data-en="Contract Manufacturing">위탁 생산</h3><p data-ko="요청 사양에 맞춰 생산 조건을 협의합니다." data-en="Production tailored to your specifications.">요청 사양에 맞춰 생산 조건을 협의합니다.</p></div></div>
+          <div id="odm-development" class="oem-option motion--stagger delay-3"><span class="oem-label">ODM</span><div><h3 data-ko="개발 협업" data-en="Product Development">개발 협업</h3><p data-ko="제품 방향과 제형 개발 범위를 검토합니다." data-en="Collaborative product and formulation development.">제품 방향과 제형 개발 범위를 검토합니다.</p></div></div>
         </div>
         <a class="outline-button motion--stagger delay-4" href="#contact"><span data-ko="제조 협업 알아보기" data-en="Explore OEM / ODM">제조 협업 알아보기</span><span aria-hidden="true">→</span></a>
       </div>
@@ -164,9 +185,9 @@
       <div class="manufacturing-inner narrow">
         <h2 id="manufacturing-title" class="motion--fade-up" data-ko="제조의 역량은,<br>현장에서 확인됩니다." data-en="Manufacturing capability<br>proven on site.">제조의 역량은,<br>현장에서 확인됩니다.</h2>
         <div class="manufacturing-cards">
-          <article class="manufacturing-card motion--fade-up delay-0"><img src="./assets/manufacturing-01.jpg" alt="제형 내용물 생산" loading="lazy"><div><h3 data-ko="제조" data-en="Production">제조</h3><p data-ko="제형·내용물 생산" data-en="Formulation and production">제형·내용물 생산</p></div></article>
-          <article class="manufacturing-card motion--fade-up delay-1"><img src="./assets/manufacturing-filling-shampoo.webp" alt="샴푸 용기 크기의 헤어 제품을 충진하는 설비" loading="lazy" decoding="async"><div><h3 data-ko="충진" data-en="Filling">충진</h3><p data-ko="용량·용기 적용" data-en="Filling into containers">용량·용기 적용</p></div></article>
-          <article class="manufacturing-card motion--fade-up delay-2"><img src="./assets/manufacturing-packaging.webp" alt="헤어 제품 용기를 검사하고 포장하는 공정 연출 이미지" loading="lazy"><div><h3 data-ko="포장" data-en="Packaging">포장</h3><p data-ko="검사·출하 준비" data-en="Inspection and shipping">검사·출하 준비</p></div></article>
+          <article id="manufacturing-production" class="manufacturing-card motion--fade-up delay-0"><img src="./assets/manufacturing-01.jpg" alt="제형 내용물 생산" loading="lazy"><div><h3 data-ko="제조" data-en="Production">제조</h3><p data-ko="제형·내용물 생산" data-en="Formulation and production">제형·내용물 생산</p></div></article>
+          <article id="manufacturing-filling" class="manufacturing-card motion--fade-up delay-1"><img src="./assets/manufacturing-filling-shampoo.webp" alt="샴푸 용기 크기의 헤어 제품을 충진하는 설비" loading="lazy" decoding="async"><div><h3 data-ko="충진" data-en="Filling">충진</h3><p data-ko="용량·용기 적용" data-en="Filling into containers">용량·용기 적용</p></div></article>
+          <article id="manufacturing-packaging" class="manufacturing-card motion--fade-up delay-2"><img src="./assets/manufacturing-packaging.webp" alt="헤어 제품 용기를 검사하고 포장하는 공정 연출 이미지" loading="lazy"><div><h3 data-ko="포장" data-en="Packaging">포장</h3><p data-ko="검사·출하 준비" data-en="Inspection and shipping">검사·출하 준비</p></div></article>
         </div>
       </div>
     </section>
