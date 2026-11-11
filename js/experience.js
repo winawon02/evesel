@@ -65,7 +65,8 @@
       },{index:0,diff:Infinity}).index;
     };
     const go = i => {
-      cards[Math.max(0,Math.min(cards.length-1,i))].scrollIntoView({inline:'center',block:'nearest',behavior:motionOff.matches?'auto':'smooth'});
+      const card = cards[Math.max(0,Math.min(cards.length-1,i))];
+      viewport.scrollTo({left: centerOf(card)-viewport.clientWidth/2,behavior:motionOff.matches?'auto':'smooth'});
     };
     if (dots) groups.forEach((group,i) => {
       const button = document.createElement('button');
@@ -91,6 +92,28 @@
       event.preventDefault();
       go(current()+(event.key==='ArrowRight'?1:-1));
     });
+    // Retain the original product section's automatic rolling, pausing while used.
+    let inView = false;
+    let paused = false;
+    let autoTimer = null;
+    const stopAuto = () => { if (autoTimer) clearInterval(autoTimer); autoTimer=null; };
+    const startAuto = () => {
+      if (autoTimer || !inView || paused || motionOff.matches || document.hidden) return;
+      autoTimer = setInterval(() => go((current()+1)%cards.length), 6500);
+    };
+    gallery.addEventListener('pointerenter', () => { paused=true; stopAuto(); });
+    gallery.addEventListener('pointerleave', () => { paused=false; startAuto(); });
+    viewport.addEventListener('touchstart', () => { paused=true; stopAuto(); }, {passive:true});
+    viewport.addEventListener('touchend', () => { paused=false; startAuto(); }, {passive:true});
+    gallery.addEventListener('focusin', () => { paused=true; stopAuto(); });
+    gallery.addEventListener('focusout', () => { paused=false; startAuto(); });
+    document.addEventListener('visibilitychange', () => { if (document.hidden) stopAuto(); else startAuto(); });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(([entry]) => {
+        inView=entry.isIntersecting;
+        if (inView) startAuto(); else stopAuto();
+      }, {threshold:.2}).observe(gallery);
+    }
     viewport.addEventListener('scroll',sync,{passive:true});
     addEventListener('resize',sync,{passive:true});
     sync();
