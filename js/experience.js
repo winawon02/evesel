@@ -1,160 +1,90 @@
-/* EVESEL — cinematic motion, triggered near the central viewport band.
-   No entry animation on the header/footer. Category photos use an actual curtain.
-   Category images remain visible without JavaScript / on reduced-motion devices. */
+/* EVESEL motion engine: reusable CSS types / delay classes only.
+   One trigger rule for every element: its TOP reaches the viewport center.
+   OEM/ODM is triggered once as a group, so the CTA never waits independently. */
 (() => {
   'use strict';
-  const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
   const hero = document.querySelector('.hero');
-  const video = document.querySelector('.hero-video');
-  const manufacturing = document.querySelector('.manufacturing-section');
+  const video = hero?.querySelector('.hero-video');
   const marquee = document.querySelector('.product-marquee');
   const topLink = document.querySelector('.back-to-top');
-  const motionAllowed = !reducedMotion.matches;
-  const hasObserver = 'IntersectionObserver' in window;
+  const manufacturing = document.querySelector('.manufacturing-section');
+  const imageLayers = [...document.querySelectorAll('.split-photo img,.manufacturing-card>img')];
 
-  if (marquee && hasObserver) {
+  if (marquee && 'IntersectionObserver' in window) {
     new IntersectionObserver(([entry]) => {
       marquee.classList.toggle('marquee-paused', !entry.isIntersecting);
-    }, { threshold: .01 }).observe(marquee);
+    }, {threshold:0.01}).observe(marquee);
   }
-
   if (hero && video) {
-    const constrained = Boolean(navigator.connection?.saveData);
-    const showVideo = () => hero.classList.add('has-video');
-    video.addEventListener('loadeddata', showVideo);
-    video.addEventListener('playing', showVideo);
-    video.addEventListener('error', () => hero.classList.remove('has-video'));
-    const playState = () => {
-      if (reducedMotion.matches || constrained || document.hidden || video.dataset.inview === 'false') {
+    const saveData = Boolean(navigator.connection?.saveData);
+    const updatePlayback = () => {
+      if (reduce.matches || saveData || document.hidden || video.dataset.inview === 'false') {
         video.pause();
-        if (reducedMotion.matches || constrained) hero.classList.remove('has-video');
+        if (reduce.matches || saveData) hero.classList.remove('has-video');
         return;
       }
       video.play()?.catch?.(() => {});
     };
-    if (hasObserver) {
+    video.addEventListener('loadeddata', () => hero.classList.add('has-video'));
+    video.addEventListener('playing', () => hero.classList.add('has-video'));
+    video.addEventListener('error', () => hero.classList.remove('has-video'));
+    if ('IntersectionObserver' in window)
       new IntersectionObserver(([entry]) => {
         video.dataset.inview = String(entry.isIntersecting);
-        playState();
+        updatePlayback();
       }, {threshold:.02}).observe(hero);
-    }
-    document.addEventListener('visibilitychange',playState);
-    reducedMotion.addEventListener?.('change',playState);
-    playState();
+    document.addEventListener('visibilitychange',updatePlayback);
+    reduce.addEventListener?.('change',updatePlayback);
+    updatePlayback();
   }
 
-  // Central 40% viewport band. Effects begin after content actually reaches the viewer,
-  // never as soon as the element merely peeks into the viewport.
-  const revealSelectors = [
-    '.brand-heading h2', '.brand-heading p', '.product-marquee',
-    '.portfolio-heading h2',
-    '.oem-section .split-photo',
-    '.manufacturing-inner h2', '.manufacturing-card',
-    '.research-section .split-photo', '.research-section .split-copy',
-    '.contact-inner'
-  ];
-  const reveals = [...new Set(revealSelectors.flatMap(selector =>
-    Array.from(document.querySelectorAll(selector))))];
-  const oemSteps = [
-    '.oem-section .split-copy > h2',
-    '.oem-section .split-copy > .section-description',
-    '.oem-section .oem-option:first-child',
-    '.oem-section .oem-option:last-child',
-    '.oem-section .split-copy > .outline-button'
-  ].map(selector=>document.querySelector(selector)).filter(Boolean);
-  const categories = Array.from(document.querySelectorAll('.portfolio-card'));
-  const categoryMarkers=categories.map(card=>{
-    const marker=document.createElement('span');
-    marker.className='portfolio-scroll-marker';
-    marker.setAttribute('aria-hidden','true');
-    card.appendChild(marker);
-    return marker;
-  });
-  const imageLayers = Array.from(document.querySelectorAll('.split-photo img, .manufacturing-card > img'));
+  const targets = [...document.querySelectorAll(
+    '.motion--fade-up,.motion--media,.motion--curtain,.motion--group'
+  )];
+  const motionEnabled = !reduce.matches && targets.length > 0;
+  if (motionEnabled) document.documentElement.classList.add('motion-ready');
 
-  if (motionAllowed && hasObserver) {
-    reveals.forEach((element,i) => {
-      element.classList.add('motion-item');
-      if (element.matches('.split-photo')) element.classList.add('motion-clip');
-      element.style.setProperty('--motion-delay', (element.matches('.brand-heading p') ? 165 : (i % 3) * 85) + 'ms');
-    });
-    // The OEM header, description, two services and button animate independently.
-    // Each stage waits until it reaches the central viewport band; the CTA is last.
-    oemSteps.forEach((el,i)=>{
-      el.classList.add('oem-step');
-      el.style.setProperty('--oem-stage-delay', [0,130,240,360,520][i]+'ms');
-    });
-    categories.forEach((card,i) => card.style.setProperty('--curtain-delay', (i * 135) + 'ms'));
-    document.documentElement.classList.add('motion-enabled');
-
-    const observerOptions={root:null,rootMargin:'-30% 0px -30% 0px',threshold:0.01};
-    const entranceObserver = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        entry.target.classList.add('is-visible');
-        entranceObserver.unobserve(entry.target);
-      }
-    }, observerOptions);
-    for (const element of [...reveals,...oemSteps]) entranceObserver.observe(element);
-    // Observe the center of each large panel, not its upper visible edge.
-    const curtainObserver = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        const card = entry.target.closest('.portfolio-card');
-        if (card) card.classList.add('is-visible');
-        curtainObserver.unobserve(entry.target);
-      });
-    }, {root:null,rootMargin:'-32% 0px -32% 0px',threshold:0});
-    categoryMarkers.forEach(marker => curtainObserver.observe(marker));
-  }
-
-  let framePending=false;
-  const revealAtCenter = element => {
-    if (element.classList.contains('is-visible')) return;
-    const box=element.getBoundingClientRect();
-    // Fallback for missed IntersectionObserver events after direct anchor navigation.
-    if (box.top <= innerHeight * .62 && box.bottom >= innerHeight * .36) {
-      element.classList.add('is-visible');
+  // A consistent rule: the TOP of an element crosses 50% viewport height.
+  // Never wait for the center of a tall card or for the last button itself.
+  const revealAtCenter = () => {
+    if (!motionEnabled) return;
+    const center = innerHeight * .5;
+    for (const element of targets) {
+      if (element.classList.contains('is-visible')) continue;
+      if (element.getBoundingClientRect().top <= center) element.classList.add('is-visible');
     }
   };
-  const onFrame=()=>{
-    framePending=false;
-    const y=scrollY||0;
-    topLink?.classList.toggle('visible', y > 1100);
-    if (!reducedMotion.matches) {
-      if (motionAllowed && hasObserver) {
-        [...reveals,...oemSteps].forEach(revealAtCenter);
-        categories.forEach(card => {
-          if (card.classList.contains('is-visible')) return;
-          const b=card.getBoundingClientRect();
-          const center=b.top+b.height*.5;
-          if ((center>=innerHeight*.32 && center<=innerHeight*.68) || b.bottom<=innerHeight*.15)
-            card.classList.add('is-visible');
-        });
+
+  let frameRequested = false;
+  const onFrame = () => {
+    frameRequested = false;
+    const y = scrollY || 0;
+    topLink?.classList.toggle('visible', y>1100);
+    revealAtCenter();
+    if (reduce.matches) return;
+    if (hero) {
+      const shift=Math.min(y,hero.offsetHeight);
+      hero.style.setProperty('--hero-shift',(shift*.14).toFixed(1)+'px');
+      hero.style.setProperty('--hero-opacity',Math.max(.1,1-shift/(hero.offsetHeight*.85)).toFixed(3));
+    }
+    if (manufacturing) {
+      const box=manufacturing.getBoundingClientRect();
+      if (box.bottom>0 && box.top<innerHeight) {
+        const p=(innerHeight-box.top)/(innerHeight+box.height);
+        manufacturing.style.setProperty('--manufacturing-shift',((p-.5)*85).toFixed(1)+'px');
       }
-      if (manufacturing) {
-        const box=manufacturing.getBoundingClientRect();
-        if (box.bottom>0 && box.top<innerHeight) {
-          const progress=(innerHeight-box.top)/(innerHeight+box.height);
-          manufacturing.style.setProperty('--manufacturing-shift',((progress-.5)*85).toFixed(1)+'px');
-        }
-      }
-      if (hero) {
-        const shift=Math.min(y,hero.offsetHeight);
-        hero.style.setProperty('--hero-shift',(shift*.14).toFixed(1)+'px');
-        hero.style.setProperty('--hero-opacity',Math.max(.1,1-shift/(hero.offsetHeight*.85)).toFixed(3));
-      }
-      for (const image of imageLayers) {
-        const box=image.parentElement.getBoundingClientRect();
-        if (box.bottom<0 || box.top>innerHeight) continue;
-        image.style.setProperty('--media-shift',
-          (((box.top+box.height/2-innerHeight/2)/innerHeight)*-19).toFixed(1)+'px');
-      }
+    }
+    for (const image of imageLayers) {
+      const rect=image.parentElement.getBoundingClientRect();
+      if (rect.bottom<0 || rect.top>innerHeight) continue;
+      image.style.setProperty('--media-shift',
+        (((rect.top+rect.height/2-innerHeight/2)/innerHeight)*-19).toFixed(1)+'px');
     }
   };
   const schedule=()=>{
-    if(framePending) return;
-    framePending=true;
+    if (frameRequested) return;
+    frameRequested=true;
     requestAnimationFrame(onFrame);
   };
   addEventListener('scroll',schedule,{passive:true});

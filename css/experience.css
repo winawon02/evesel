@@ -1,42 +1,127 @@
-/* EVESEL: original Penpot product row + cinematic scroll motion from supplied screen recording */
-:root{--motion-ease:cubic-bezier(.17,.72,.21,1)}
+/* EVESEL homepage — reusable motion types and centralized delays.
+   Animations start when the element TOP reaches the viewport midpoint.
+   No motion on site header/footer. */
+:root{
+  --motion-ease:cubic-bezier(.18,.72,.22,1);
+  --motion-duration:760ms;
+  --curtain-duration:940ms;
+}
+/* Common timing utilities. Applied to every animation type. */
+.delay-0{--motion-delay:0ms}
+.delay-1{--motion-delay:90ms}
+.delay-2{--motion-delay:180ms}
+.delay-3{--motion-delay:270ms}
+.delay-4{--motion-delay:360ms}
 .scroll-progress{pointer-events:none;position:fixed;z-index:250;top:0;left:0;width:100%;height:3px;background:#8dc6be;transform-origin:left center;transform:scaleX(0)}
-/* Hero: keep the existing editorial composition while the film plays full-bleed. */
-.hero{isolation:isolate;overflow:hidden;background-image:url("../assets/hero-poster.webp")}
-.hero-video{position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:cover;object-position:center;opacity:0;transition:opacity .75s ease;transform:translate3d(0,var(--hero-shift,0px),0) scale(1.04);will-change:transform}
+.hero{height:100vh;height:100svh;min-height:0;max-height:none;isolation:isolate;overflow:hidden;background-image:url("../assets/hero-poster.webp")}
+.hero-content{bottom:clamp(104px,14svh,160px);z-index:2;opacity:var(--hero-opacity,1);transform:translate3d(0,calc(var(--hero-shift,0px) * .37),0)}
+.hero-video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:cover;object-position:center;opacity:0;transition:opacity .65s ease;transform:translate3d(0,var(--hero-shift,0px),0) scale(1.04)}
 .hero.has-video .hero-video{opacity:1}
 .hero-overlay{z-index:1;pointer-events:none;background:linear-gradient(90deg,rgba(4,16,20,.56),rgba(7,20,23,.18) 73%),linear-gradient(0deg,rgba(5,14,18,.45),transparent 40%)}
-.hero-content{z-index:2;opacity:var(--hero-opacity,1);transform:translate3d(0,calc(var(--hero-shift,0px) * .37),0)}
-.hero h1{animation:hero-title-in 1.2s .05s both var(--motion-ease)}
-.hero p{animation:hero-title-in 1.3s .25s both var(--motion-ease)}
+.hero h1{animation:hero-title-in 1.15s .05s both var(--motion-ease)}
+.hero p{animation:hero-title-in 1.25s .2s both var(--motion-ease)}
 .scroll-cue{z-index:2}
 .scroll-line{position:relative;overflow:hidden;background:rgba(255,255,255,.25)}
 .scroll-line::after{content:"";position:absolute;inset:0;background:#fff;transform:translateY(-100%);animation:scroll-pulse 2.4s ease-in-out infinite}
-@keyframes hero-title-in{from{opacity:0;transform:translateY(42px)}to{opacity:1;transform:translateY(0)}}
+@keyframes hero-title-in{from{opacity:0;transform:translateY(32px)}to{opacity:1;transform:translateY(0)}}
 @keyframes scroll-pulse{55%,100%{transform:translateY(110%)}}
-/* Section 02: ORIGINAL single horizontal product line. Only sequence & actual cutouts changed. */
+/* Fixed layout, no entrance/scroll transition on header or footer. */
+.site-header,.site-header *,.site-footer,.site-footer *{animation:none!important;transition:none!important}
+.site-footer,.site-footer *{opacity:1}
+/* Penpot-based centered header layout; optical correction for the logo silhouette.
+   The image is intentionally SMALLER than its box, with extra bottom whitespace. */
+.site-header .header-inner{
+  display:grid;grid-template-columns:minmax(0,1fr) max-content minmax(0,1fr);
+  align-items:center;gap:clamp(16px,2vw,32px);padding-inline:clamp(28px,4.5vw,86px)
+}
+.site-header .brand-logo{justify-self:start;flex:none;width:126px;height:82px}
+.site-header .brand-logo img{
+  width:102px;height:66px;left:0;top:1px;right:auto;bottom:auto;
+  object-fit:contain;object-position:left top
+}
+.site-header .desktop-nav{display:flex;justify-self:center;margin:0;gap:clamp(18px,2.65vw,49px)}
+.site-header .desktop-nav a{font-size:18px;font-weight:500}
+.site-header .header-actions{justify-self:end;margin:0;gap:19px}
+.site-header .language-switch{height:46px;border-width:1.5px;border-radius:32px;padding:3px;gap:2px}
+.site-header .language-switch button{height:38px;min-width:38px;padding:0 3px;font-size:14px;font-weight:700;border-radius:50%}
+.site-header .menu-toggle{width:46px;height:46px;border-width:1.5px;gap:7px}
+.site-header .menu-toggle span{width:22px;height:1.5px}
+.site-header.open .menu-toggle span:first-child{transform:translateY(8.5px) rotate(45deg)}
+.site-header.open .menu-toggle span:last-child{transform:translateY(-8.5px) rotate(-45deg)}
+/* Original Penpot single-row product marquee stays unchanged. */
 .brand-section{height:1240px;min-height:0;padding-bottom:0;overflow:hidden}
 .brand-heading{padding-top:183px}
 .brand-heading h2,.portfolio-heading h2{font-size:clamp(38px,4.2vw,78px)}
 .product-marquee{width:100%;margin-top:203px;overflow:hidden;position:relative}
 .marquee-track{display:flex;width:max-content;animation:products 148s linear infinite;will-change:transform}
 .marquee-set{display:flex;flex:0 0 auto;align-items:center;gap:38px;padding-right:38px}
-.marquee-set img{display:block;height:266px;width:auto;max-width:none;object-fit:contain;flex:0 0 auto;transition:filter .3s ease}
+.marquee-set img{display:block;height:266px;width:auto;max-width:none;object-fit:contain;flex:0 0 auto}
 .product-marquee:hover .marquee-track,.product-marquee:focus-within .marquee-track,.product-marquee.marquee-paused .marquee-track{animation-play-state:paused}
 .product-marquee:focus-visible{outline:2px solid #658b98;outline-offset:-3px}
 @keyframes products{to{transform:translateX(-50%)}}
-/* Large full-bleed category panels inspired by the recording's photographic triptych.
-   Four existing EVESEL categories remain four panels. */
+/* Motion type 1 — generic text/card reveal. */
+.motion-ready .motion--fade-up{
+  opacity:0;transform:translate3d(0,34px,0);
+  transition:opacity var(--motion-duration) var(--motion-ease),transform var(--motion-duration) var(--motion-ease);
+  transition-delay:var(--motion-delay,0ms)
+}
+.motion-ready .motion--fade-up.is-visible{opacity:1;transform:none}
+.motion-ready .brand-heading h2.motion--fade-up{filter:blur(5px);transition-property:opacity,transform,filter}
+.motion-ready .brand-heading h2.motion--fade-up.is-visible{filter:blur(0)}
+/* Motion type 2 — media reveal. */
+.motion-ready .motion--media{opacity:0;clip-path:inset(8% 0);transform:translate3d(0,18px,0);
+  transition:opacity var(--motion-duration) var(--motion-ease),clip-path var(--motion-duration) var(--motion-ease),transform var(--motion-duration) var(--motion-ease);
+  transition-delay:var(--motion-delay,0ms)
+}
+.motion-ready .motion--media.is-visible{opacity:1;clip-path:inset(0);transform:none}
+/* Motion type 3 — directional photo curtains. No background photo, tint or caption before opening. */
 .portfolio-heading{height:460px}
+.portfolio-card{isolation:isolate;aspect-ratio:auto;min-height:min(94svh,900px);background:#fff!important;border-right:0!important}
+.portfolio-card::before{display:none!important}
+.portfolio-card>img{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;visibility:visible;opacity:1;
+  transform:scale(1.07);
+  transition:clip-path var(--curtain-duration) cubic-bezier(.72,0,.2,1),transform 1.25s var(--motion-ease);
+  transition-delay:var(--motion-delay,0ms)
+}
+.motion-ready .portfolio-card.motion--curtain:nth-child(odd):not(.is-visible)>img{clip-path:inset(0 0 100% 0)}
+.motion-ready .portfolio-card.motion--curtain:nth-child(even):not(.is-visible)>img{clip-path:inset(100% 0 0 0)}
+.portfolio-card.motion--curtain.is-visible>img{clip-path:inset(0);transform:scale(1)}
+.portfolio-card:hover>img{transform:scale(1.055)}
+.portfolio-overlay{z-index:2;pointer-events:none}
+.motion-ready .motion--curtain .portfolio-overlay{opacity:0;transition:opacity .4s ease;transition-delay:var(--motion-delay,0ms)}
+.motion-ready .motion--curtain.is-visible .portfolio-overlay{opacity:1}
+.portfolio-content{
+  top:50%;bottom:auto;z-index:4;transform:translateY(-50%);
+  transition:opacity .6s var(--motion-ease),transform .6s var(--motion-ease)
+}
+.motion-ready .motion--curtain .portfolio-content{opacity:0;transform:translateY(calc(-50% + 16px));transition-delay:var(--motion-delay,0ms)}
+.motion-ready .motion--curtain.is-visible .portfolio-content{
+  opacity:1;transform:translateY(-50%);
+  transition-delay:calc(var(--motion-delay,0ms) + 230ms)
+}
+.portfolio-card:hover .portfolio-content{transform:translateY(calc(-50% - 8px))}
+.portfolio-card::after{
+  content:"";position:absolute;z-index:3;top:0;right:0;bottom:0;width:1px;
+  background:rgba(255,255,255,.72);opacity:0;transform:scaleY(0);
+  transform-origin:top;transition:opacity .28s ease,transform .5s var(--motion-ease)
+}
+.portfolio-card.motion--curtain.is-visible:not(:last-child)::after{
+  opacity:1;transform:scaleY(1);
+  transition-delay:calc(var(--motion-delay,0ms) + 720ms)
+}
+/* Motion type 4 — one group trigger; staggered children are NOT observed separately.
+   Short, reusable delay classes keep the final CTA prompt. */
+.motion-ready .motion--group .motion--stagger{
+  opacity:0;transform:translate3d(0,30px,0);
+  transition:opacity 700ms var(--motion-ease),transform 730ms var(--motion-ease);
+  transition-delay:var(--motion-delay,0ms)
+}
+.motion-ready .motion--group.is-visible .motion--stagger{opacity:1;transform:none}
+.motion-ready .oem-section .split-copy{opacity:1!important;transform:none!important}
+.motion-ready .oem-section .outline-button.motion--stagger:hover{background:#1d292f;color:white}
+/* Content-image parallax independent of entrance types. */
 .portfolio-card,.manufacturing-card{isolation:isolate}
-.portfolio-card{aspect-ratio:auto;min-height:min(94svh,900px)}
-/* Progressive enhancement: category images remain visible even without JS/IO. */
-.portfolio-card>img{display:block;visibility:visible;opacity:1;transform:scale(1.09);transition:transform 1.45s var(--motion-ease)}
-.portfolio-card.is-visible>img{transform:scale(1.02)}
-.portfolio-card:hover>img{transform:scale(1.08)}
-.portfolio-content{transition:transform .65s var(--motion-ease)}
-.portfolio-card:hover .portfolio-content{transform:translateY(-8px)}
-/* Pinned photo at wide sizes; content continues to scroll normally. */
 @media(min-width:1024px){
   .oem-section{min-height:max(1080px,120svh)}
   .research-section{min-height:max(900px,112svh)}
@@ -44,19 +129,32 @@
 }
 .manufacturing-bg{inset:-10% 0;transform:translate3d(0,var(--manufacturing-shift,0px),0) scale(1.06);will-change:transform}
 .split-photo img,.manufacturing-card>img{transform:translate3d(0,var(--media-shift,0px),0) scale(1.075);will-change:transform}
-/* Deliberate reveals and staggered panels rather than scroll-jacking. */
-.motion-enabled .motion-item{opacity:0;transform:translate3d(0,52px,0);transition:opacity 1.05s var(--motion-ease),transform 1.2s var(--motion-ease),clip-path 1.35s var(--motion-ease);transition-delay:var(--motion-delay,0ms)}
-.motion-enabled .motion-item.is-visible{opacity:1;transform:none}
-.motion-enabled .motion-item.motion-clip{clip-path:inset(11% 0 11% 0);transform:scale(.965)}
-.motion-enabled .motion-item.motion-clip.is-visible{clip-path:inset(0 0 0 0);transform:none}
-.motion-enabled .oem-section .split-copy,.motion-enabled .research-section .split-copy{transform:translate3d(34px,0,0)}
-.motion-enabled .research-section .split-copy{transform:translate3d(-34px,0,0)}
-.motion-enabled .oem-section .split-copy.is-visible,.motion-enabled .research-section .split-copy.is-visible{transform:none}
-.motion-enabled .manufacturing-card:nth-child(2){--motion-delay:110ms!important}
-.motion-enabled .manufacturing-card:nth-child(3){--motion-delay:220ms!important}
 .back-to-top{position:fixed;z-index:70;right:30px;bottom:26px;width:52px;height:52px;border:1px solid rgba(20,42,48,.18);border-radius:50%;display:grid;place-items:center;background:rgba(255,255,255,.94);color:#1b292e;font-size:23px;box-shadow:0 8px 30px rgba(15,35,42,.08);opacity:0;pointer-events:none;transform:translateY(14px);transition:opacity .3s,transform .3s}
 .back-to-top.visible{opacity:1;pointer-events:auto;transform:translateY(0)}
+@media(max-width:1300px) and (min-width:1024px){
+  .site-header .header-inner{gap:14px;padding-inline:clamp(22px,3vw,44px)}
+  .site-header .brand-logo{width:108px;height:76px}
+  .site-header .brand-logo img{width:88px;height:56px}
+  .site-header .desktop-nav{gap:clamp(12px,1.4vw,19px)}
+  .site-header .desktop-nav a{font-size:clamp(13px,1.2vw,16px)}
+  .site-header .header-actions{gap:12px}
+  .site-header .language-switch{height:40px}
+  .site-header .language-switch button{height:32px;min-width:32px;font-size:12px}
+  .site-header .menu-toggle{width:40px;height:40px;gap:6px}
+  .site-header .menu-toggle span{width:19px}
+}
 @media(max-width:1023px){
+  .site-header .header-inner{grid-template-columns:minmax(0,1fr) max-content;padding-inline:24px;gap:12px}
+  .site-header .desktop-nav{display:none}
+  .site-header .brand-logo{width:112px;height:70px}
+  .site-header .brand-logo img{width:91px;height:58px;top:0}
+  .site-header .header-actions{gap:12px}
+  .site-header .language-switch{height:38px;padding:3px}
+  .site-header .language-switch button{height:30px;min-width:30px;font-size:12px}
+  .site-header .menu-toggle{width:38px;height:38px;gap:5px}
+  .site-header .menu-toggle span{width:19px;height:1.5px}
+  .site-header.open .menu-toggle span:first-child{transform:translateY(6.5px) rotate(45deg)}
+  .site-header.open .menu-toggle span:last-child{transform:translateY(-6.5px) rotate(-45deg)}
   .brand-section{height:820px}
   .brand-heading{padding-top:108px}
   .product-marquee{margin-top:140px}
@@ -66,6 +164,11 @@
   .portfolio-card{min-height:0;aspect-ratio:3/4}
 }
 @media(max-width:600px){
+  .site-header .header-inner{padding-inline:16px}
+  .site-header .brand-logo{width:96px;height:66px}
+  .site-header .brand-logo img{width:77px;height:50px;top:1px}
+  .site-header .header-actions{gap:10px}
+  .hero-content{bottom:clamp(112px,20svh,165px)}
   .hero-video{object-position:53% center}
   .hero-overlay{background:linear-gradient(180deg,rgba(5,12,15,.28),rgba(4,13,16,.16) 25%,rgba(4,13,16,.75) 96%)}
   .hero-content{transform:none}
@@ -78,11 +181,12 @@
   .marquee-track{animation-duration:140s}
   .portfolio-heading{height:240px}
   .portfolio-card{min-height:0;aspect-ratio:3/4}
+  .portfolio-card::after{top:auto;bottom:0;left:0;right:0;width:auto;height:1px;transform:scaleX(0);transform-origin:left}
+  .portfolio-card.motion--curtain.is-visible:not(:last-child)::after{transform:scaleX(1)}
   .back-to-top{right:14px;bottom:16px;width:44px;height:44px}
   .oem-section .split-copy{min-height:0}
   .manufacturing-bg{transform:none}
   .manufacturing-card>img{transform:scale(1.075)}
-  .motion-enabled .motion-item{transition-duration:.78s;transform:translate3d(0,24px,0)}
 }
 @media(prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
@@ -90,238 +194,12 @@
   .hero h1,.hero p,.scroll-line::after{animation:none!important}
   .hero-content,.hero{transform:none!important;opacity:1!important}
   .marquee-track{animation:none!important;transform:none!important}
-  .marquee-set img,.motion-enabled .motion-item,.motion-enabled .motion-item.motion-clip,.portfolio-card>img,.back-to-top{transition:none!important}
-  .portfolio-card>img{transform:none!important}
-  .motion-enabled .motion-item,.motion-enabled .motion-item.motion-clip{opacity:1!important;clip-path:none!important;transform:none!important}
+  .motion-ready .motion--fade-up,.motion-ready .motion--media,.motion-ready .motion--stagger{
+    opacity:1!important;clip-path:none!important;transform:none!important;filter:none!important;transition:none!important
+  }
+  .motion-ready .motion--curtain>img{clip-path:none!important;transform:none!important;transition:none!important}
+  .motion-ready .motion--curtain .portfolio-overlay{opacity:1!important;transition:none!important}
+  .motion-ready .motion--curtain .portfolio-content{opacity:1!important;transform:translateY(-50%)!important;transition:none!important}
+  .portfolio-card::after{opacity:1!important;transform:none!important;transition:none!important}
   .split-photo img,.manufacturing-card>img,.manufacturing-bg{transform:none!important}
-}
-
-
-/* === 2026-11-11: viewport-height hero + central-band entrances + curtain reveals === */
-/* Display-height hero: remove old 940px, 660px and 650px minimums on ALL breakpoints. */
-.hero{height:100vh;height:100svh;min-height:0;max-height:none}
-.hero-content{bottom:clamp(104px,14svh,160px)}
-
-/* Header / footer never participate in entrance animations or scroll-driven transitions.
-   Hamburger state remains functional but switches immediately. */
-.site-header,.site-header *, .site-footer,.site-footer *{animation:none!important;transition:none!important}
-.site-footer,.site-footer *{opacity:1}
-
-/* Entrance animations are controlled by the centralized viewport-band observer. */
-.motion-enabled .brand-heading h2.motion-item{
-  opacity:0;filter:blur(7px);transform:translate3d(0,78px,0);
-  transition:opacity 1.05s var(--motion-ease),transform 1.15s var(--motion-ease),filter 1.15s var(--motion-ease);
-}
-.motion-enabled .brand-heading h2.motion-item.is-visible{
-  opacity:1;filter:blur(0);transform:translate3d(0,0,0);
-}
-.motion-enabled .brand-heading p.motion-item{
-  opacity:0;transform:translate3d(0,34px,0);
-  transition:opacity .85s var(--motion-ease),transform 1s var(--motion-ease);
-  transition-delay:.18s;
-}
-.motion-enabled .brand-heading p.motion-item.is-visible{opacity:1;transform:none}
-.motion-enabled .portfolio-heading h2.motion-item{
-  opacity:0;transform:translate3d(0,58px,0);
-  transition:opacity 1s var(--motion-ease),transform 1.1s var(--motion-ease);
-}
-.motion-enabled .portfolio-heading h2.motion-item.is-visible{opacity:1;transform:none}
-
-/* Directional photographic curtains: no solid-colour panel before reveal.
-   The blurred copy of each *same* photo is the cover, so no blank colour flashes.
-   Odd cards reveal from TOP to BOTTOM; even cards from BOTTOM to TOP. */
-.portfolio-card{
-  isolation:isolate;
-  border-right:0!important;
-  background:#333;
-  --panel-photo:url("../assets/category-color.jpg");
-}
-.portfolio-card:nth-child(1){--panel-photo:url("../assets/category-color.jpg")}
-.portfolio-card:nth-child(2){--panel-photo:url("../assets/category-perm.jpg")}
-.portfolio-card:nth-child(3){--panel-photo:url("../assets/category-care.jpg")}
-.portfolio-card:nth-child(4){--panel-photo:url("../assets/category-styling.jpg")}
-/* This photographic preview remains visible during the closed-curtain state. */
-.portfolio-card::before{
-  content:"";position:absolute;inset:-12px;z-index:0;pointer-events:none;
-  background-image:var(--panel-photo);background-position:center;background-size:cover;
-  filter:blur(11px) brightness(.72) saturate(.8);transform:scale(1.055);
-  transition:none;
-}
-.portfolio-card>img{
-  position:absolute;inset:0;z-index:1;display:block;visibility:visible;opacity:1;
-  width:100%;height:100%;object-fit:cover;
-  clip-path:inset(0 0 0 0);transform:scale(1.075);
-  transition:clip-path 1.45s cubic-bezier(.76,0,.18,1),transform 1.6s var(--motion-ease);
-}
-.motion-enabled .portfolio-card:nth-child(odd)>img{clip-path:inset(0 0 100% 0)}
-.motion-enabled .portfolio-card:nth-child(even)>img{clip-path:inset(100% 0 0 0)}
-.motion-enabled .portfolio-card.is-visible>img{
-  clip-path:inset(0 0 0 0);
-  transform:scale(1.01);
-  transition-delay:var(--curtain-delay,0ms);
-}
-.portfolio-card:hover>img{transform:scale(1.055)}
-/* Divider draws AFTER the photograph has been revealed; never visible beforehand. */
-.portfolio-card::after{
-  content:"";position:absolute;inset:0 0 0 auto;z-index:3;pointer-events:none;
-  width:1px;background:rgba(255,255,255,.72);
-  opacity:0;transform:scaleY(0);transform-origin:top;
-  transition:opacity .38s ease,transform .65s var(--motion-ease);
-}
-.portfolio-card:not(:last-child).is-visible::after{
-  opacity:1;transform:scaleY(1);
-  transition-delay:calc(var(--curtain-delay,0ms) + 1.15s);
-}
-.portfolio-overlay{z-index:2;pointer-events:none}
-.portfolio-content{
-  top:50%;bottom:auto;z-index:4;
-  transform:translateY(-50%);
-  transition:opacity .75s var(--motion-ease),transform .85s var(--motion-ease);
-}
-.portfolio-card:hover .portfolio-content{transform:translateY(calc(-50% - 8px))}
-.motion-enabled .portfolio-card .portfolio-content{
-  opacity:0;transform:translateY(calc(-50% + 20px));
-}
-.motion-enabled .portfolio-card.is-visible .portfolio-content{
-  opacity:1;transform:translateY(-50%);
-  transition-delay:calc(var(--curtain-delay,0ms) + .55s);
-}
-.motion-enabled .portfolio-card.is-visible:hover .portfolio-content{
-  transform:translateY(calc(-50% - 8px));
-}
-/* The reveal marker stays at the CENTER of the panel, instead of its top edge. */
-.portfolio-scroll-marker{
-  position:absolute;z-index:0;top:50%;left:50%;width:2px;height:2px;
-  pointer-events:none;
-}
-
-@media(max-width:1023px){
-  .portfolio-card::after{width:100%;height:1px;top:auto;bottom:0;left:0;right:0;
-    transform:scaleX(0);transform-origin:left}
-  .portfolio-card:not(:last-child).is-visible::after{transform:scaleX(1)}
-}
-@media(max-width:600px){
-  .hero{height:100svh;min-height:0}
-  .hero-content{bottom:clamp(112px,20svh,165px)}
-  .motion-enabled .portfolio-card{--curtain-delay:0ms!important}
-}
-@media(prefers-reduced-motion:reduce){
-  .hero{height:100svh;min-height:0}
-  .motion-enabled .brand-heading h2.motion-item,
-  .motion-enabled .brand-heading p.motion-item,
-  .motion-enabled .portfolio-heading h2.motion-item{
-    opacity:1!important;filter:none!important;transform:none!important;transition:none!important
-  }
-  .portfolio-card::before{display:none!important}
-  .motion-enabled .portfolio-card .portfolio-content{
-    opacity:1!important;transform:translateY(-50%)!important;transition:none!important
-  }
-}
-
-@media(prefers-reduced-motion:reduce){
-  .portfolio-card>img,.motion-enabled .portfolio-card:nth-child(odd)>img,
-  .motion-enabled .portfolio-card:nth-child(even)>img{clip-path:none!important;transform:none!important;transition:none!important}
-  .portfolio-card::before{display:none!important}
-  .portfolio-card:not(:last-child)::after{opacity:1!important;transform:none!important;transition:none!important}
-  .portfolio-content,.motion-enabled .portfolio-card .portfolio-content{opacity:1!important;transform:translateY(-50%)!important;transition:none!important}
-}
-
-/* 2026-11-11: Clean white before the photographic reveal.
-   Do not display the old blurred pre-image or colored panel. */
-.portfolio-card{background:#fff!important}
-.portfolio-card::before{display:none!important;background:none!important}
-.motion-enabled .portfolio-card .portfolio-overlay{opacity:0;transition:opacity .45s ease}
-.motion-enabled .portfolio-card.is-visible .portfolio-overlay{
-  opacity:1;transition-delay:calc(var(--curtain-delay,0ms) + .58s)
-}
-/* Initial state remains plain white: photos are fully clipped and copy is hidden.
-   Unanimated / accessibility fallback continues to show the real photo. */
-.motion-enabled .portfolio-card:nth-child(odd):not(.is-visible)>img{clip-path:inset(0 0 100% 0)}
-.motion-enabled .portfolio-card:nth-child(even):not(.is-visible)>img{clip-path:inset(100% 0 0 0)}
-/* Only the original photo is uncovered. Dividers appear after the reveal. */
-.portfolio-card:not(:last-child)::after{opacity:0}
-.motion-enabled .portfolio-card:not(:last-child).is-visible::after{
-  opacity:1;transition-delay:calc(var(--curtain-delay,0ms) + 1.16s)
-}
-
-/* Header proportions from the preserved EVESEL/Penpot header prototype:
-   true horizontal centering independent of the logo / language+menu widths. */
-.site-header .header-inner{
-  display:grid;
-  grid-template-columns:minmax(0,1fr) max-content minmax(0,1fr);
-  align-items:center;
-  gap:clamp(16px,2vw,32px);
-  padding-inline:clamp(28px,4.5vw,86px)
-}
-.site-header .brand-logo{justify-self:start;flex:none;width:126px;height:82px}
-.site-header .desktop-nav{
-  display:flex;justify-self:center;
-  margin:0;gap:clamp(18px,2.65vw,49px)
-}
-.site-header .desktop-nav a{font-size:18px;font-weight:500}
-.site-header .header-actions{
-  justify-self:end;margin:0;gap:19px
-}
-.site-header .language-switch{
-  height:46px;border-width:1.5px;border-radius:32px;
-  padding:3px;gap:2px
-}
-.site-header .language-switch button{
-  height:38px;min-width:38px;padding:0 3px;
-  font-size:14px;font-weight:700;border-radius:50%
-}
-.site-header .menu-toggle{
-  width:46px;height:46px;border-width:1.5px;gap:7px
-}
-.site-header .menu-toggle span{width:22px;height:1.5px}
-.site-header.open .menu-toggle span:first-child{transform:translateY(8.5px) rotate(45deg)}
-.site-header.open .menu-toggle span:last-child{transform:translateY(-8.5px) rotate(-45deg)}
-/* Main section 04: text enters in the actual reading order instead of
-   moving the entire parent while the button runs independently. */
-.motion-enabled .oem-section .split-copy{transform:none!important;opacity:1!important}
-.motion-enabled .oem-section .oem-step{
-  opacity:0;transform:translate3d(0,38px,0);
-  filter:blur(3px);
-  transition:opacity .85s var(--motion-ease),transform .95s var(--motion-ease),filter .95s var(--motion-ease);
-  transition-delay:var(--oem-stage-delay,0ms)
-}
-.motion-enabled .oem-section .oem-step.is-visible{
-  opacity:1;transform:none;filter:none
-}
-/* Keep the CTA's hover reaction while it receives its own final reveal. */
-.motion-enabled .oem-section .outline-button.oem-step:hover{background:#1d292f;color:white}
-@media(max-width:1300px) and (min-width:1024px){
-  .site-header .header-inner{gap:14px;padding-inline:clamp(22px,3vw,44px)}
-  .site-header .brand-logo{width:108px;height:76px}
-  .site-header .desktop-nav{gap:clamp(12px,1.4vw,19px)}
-  .site-header .desktop-nav a{font-size:clamp(13px,1.2vw,16px)}
-  .site-header .header-actions{gap:12px}
-  .site-header .language-switch{height:40px}
-  .site-header .language-switch button{height:32px;min-width:32px;font-size:12px}
-  .site-header .menu-toggle{width:40px;height:40px;gap:6px}
-  .site-header .menu-toggle span{width:19px}
-}
-@media(max-width:1023px){
-  .site-header .header-inner{
-    display:grid;grid-template-columns:minmax(0,1fr) max-content;
-    padding-inline:24px;gap:12px
-  }
-  .site-header .desktop-nav{display:none}
-  .site-header .brand-logo{width:112px;height:70px}
-  .site-header .header-actions{gap:12px}
-  .site-header .language-switch{height:38px;padding:3px}
-  .site-header .language-switch button{height:30px;min-width:30px;font-size:12px}
-  .site-header .menu-toggle{width:38px;height:38px;gap:5px}
-  .site-header .menu-toggle span{width:19px;height:1.5px}
-  .site-header.open .menu-toggle span:first-child{transform:translateY(6.5px) rotate(45deg)}
-  .site-header.open .menu-toggle span:last-child{transform:translateY(-6.5px) rotate(-45deg)}
-}
-@media(max-width:600px){
-  .site-header .header-inner{padding-inline:16px}
-  .site-header .brand-logo{width:96px;height:66px}
-  .site-header .header-actions{gap:10px}
-}
-@media(prefers-reduced-motion:reduce){
-  .motion-enabled .portfolio-card .portfolio-overlay{opacity:1!important;transition:none!important}
-  .motion-enabled .oem-section .oem-step{opacity:1!important;transform:none!important;filter:none!important;transition:none!important}
 }
