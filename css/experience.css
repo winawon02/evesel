@@ -1,16 +1,12 @@
 /* EVESEL MOTION: animations, reveals, transitions, scroll/parallax and reduced-motion.
    Do not put layout, fonts, colors or header sizing here. */
 
-.desktop-nav a:hover {
-  opacity: .65;
-}
 .marquee-track {
   animation: products 148s linear infinite;
   will-change: transform;
 }
 .portfolio-card>img {
   transition: clip-path var(--curtain-duration) cubic-bezier(.65,0,.25,1),transform 1.6s var(--motion-ease);
-  opacity: 1;
   transform: scale(1.07);
   transition-delay: var(--motion-delay,0ms);
 }

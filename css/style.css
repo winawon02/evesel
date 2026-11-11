@@ -1,6 +1,7 @@
+@charset "UTF-8";
 /* EVESEL BASE: typography, colors, layout, all breakpoints, header/footer and interactive UI.
    This file owns the visual design. Motion properties live in experience.css. */
-@charset "UTF-8";
+
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
 
 
@@ -124,6 +125,10 @@ a:focus-visible,button:focus-visible {
   font-size: 18px;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.desktop-nav a:hover {
+  opacity: .65;
 }
 .desktop-nav > a,.desktop-nav > .nav-item {
   height: 100%;
@@ -471,6 +476,7 @@ body.menu-open {
   border-right: 1px solid rgba(255,255,255,.6);
 }
 .portfolio-card>img {
+  opacity: 1;
   width: 100%;
   height: 100%;
   position: absolute;
