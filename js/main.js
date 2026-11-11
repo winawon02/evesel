@@ -39,7 +39,7 @@
     drawer.setAttribute("aria-hidden", String(!open));
     if ("inert" in drawer) drawer.inert = !open;
     if (open) {
-      const first = drawer.querySelector("a");
+      const first = drawer.querySelector("summary, a");
       if (first) first.focus({ preventScroll: true });
     } else if (restoreFocus) {
       toggle.focus({ preventScroll: true });
@@ -56,7 +56,7 @@
         setMenu(false, true);
       }
       if (event.key === "Tab" && menuOpen) {
-        const items = [toggle, ...drawer.querySelectorAll("a")];
+        const items = [toggle, ...drawer.querySelectorAll("summary, a")];
         const first = items[0];
         const last = items[items.length - 1];
         if (event.shiftKey && document.activeElement === first) {
@@ -71,6 +71,16 @@
 
     document.addEventListener("click", event => {
       if (menuOpen && !drawer.contains(event.target) && !header.contains(event.target)) setMenu(false);
+    });
+  }
+
+  if (drawer) {
+    drawer.querySelectorAll(".mobile-nav-group").forEach(group => {
+      group.addEventListener("toggle", () => {
+        if (group.open) drawer.querySelectorAll(".mobile-nav-group").forEach(other => {
+          if (other !== group) other.open = false;
+        });
+      });
     });
   }
 
