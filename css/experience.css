@@ -88,9 +88,18 @@
 .motion-ready .portfolio-card.motion--curtain:nth-child(even):not(.is-visible)>img{clip-path:inset(100% 0 0 0)}
 .portfolio-card.motion--curtain.is-visible>img{clip-path:inset(0);transform:scale(1)}
 .portfolio-card:hover>img{transform:scale(1.055)}
+/* The gradient must share the photo curtain mask. Without this, a full-area
+   black gradient dims the white unrevealed part of every card to gray. */
 .portfolio-overlay{z-index:2;pointer-events:none}
-.motion-ready .motion--curtain .portfolio-overlay{opacity:0;transition:opacity .8s ease;transition-delay:var(--motion-delay,0ms)}
-.motion-ready .motion--curtain.is-visible .portfolio-overlay{opacity:1}
+.motion-ready .motion--curtain .portfolio-overlay{
+  opacity:1;
+  clip-path:inset(0);
+  transition:clip-path var(--curtain-duration) cubic-bezier(.65,0,.25,1);
+  transition-delay:var(--motion-delay,0ms)
+}
+.motion-ready .portfolio-card.motion--curtain:nth-child(odd):not(.is-visible) .portfolio-overlay{clip-path:inset(0 0 100% 0)}
+.motion-ready .portfolio-card.motion--curtain:nth-child(even):not(.is-visible) .portfolio-overlay{clip-path:inset(100% 0 0 0)}
+.motion-ready .motion--curtain.is-visible .portfolio-overlay{clip-path:inset(0)}
 .portfolio-content{
   top:50%;bottom:auto;z-index:4;transform:translateY(-50%);
   transition:opacity .92s var(--motion-ease),transform .95s var(--motion-ease)
@@ -198,7 +207,7 @@
     opacity:1!important;clip-path:none!important;transform:none!important;filter:none!important;transition:none!important
   }
   .motion-ready .motion--curtain>img{clip-path:none!important;transform:none!important;transition:none!important}
-  .motion-ready .motion--curtain .portfolio-overlay{opacity:1!important;transition:none!important}
+  .motion-ready .motion--curtain .portfolio-overlay{opacity:1!important;clip-path:none!important;transition:none!important}
   .motion-ready .motion--curtain .portfolio-content{opacity:1!important;transform:translateY(-50%)!important;transition:none!important}
   .portfolio-card::after{opacity:1!important;transform:none!important;transition:none!important}
   .split-photo img,.manufacturing-card>img,.manufacturing-bg{transform:none!important}
