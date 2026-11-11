@@ -56,7 +56,7 @@
         setMenu(false, true);
       }
       if (event.key === "Tab" && menuOpen) {
-        const items = [toggle, ...drawer.querySelectorAll("summary, a")];
+        const items = [toggle, ...drawer.querySelectorAll("summary, details[open] a")];
         const first = items[0];
         const last = items[items.length - 1];
         if (event.shiftKey && document.activeElement === first) {
