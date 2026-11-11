@@ -45,13 +45,17 @@ README.md
 - 스크롤 섹션 순차 등장, 클리핑 리빌, 이미지 패럴랙스, 상단 진행 표시, 히어로 텍스트 모션.
 - 사용자의 모션 감소 설정 및 데이터 절약 설정을 존중합니다.
 
-### 중요한 미디어 설치 안내
+### 설치 및 현재 상태
 
-`assets/hero-loop.mp4`, `assets/hero-poster.webp`, `assets/products/product-01.webp`~`product-38.webp`는 **대용량 바이너리 파일**입니다. 미디어 ZIP을 저장소 루트에서 압축 해제하여 업로드해야 실제 파일이 표시됩니다. 그 전에는 기존 `hero.jpg`와 `product-XX.png`가 폴백으로 사용됩니다.
+**메인 브랜치에 미디어 업로드 완료** — 이전 안내의 별도 ZIP 업로드는 더 이상 필요하지 않습니다.
 
-```sh
-# 제공된 EVESEL_media_assets.zip을 압축 해제하여 assets/ 경로 복사 후
- git add assets/hero-loop.mp4 assets/hero-poster.webp assets/products
- git commit -m "assets: add EVESEL hero film and 38 product images"
- git push origin main
-```
+- `assets/hero-loop.mp4`: 원본 영상을 1920×1080, 15초 H.264로 웹 최적화한 배경 영상 (6.66 MB)
+- `assets/hero-poster.webp`: 영상 프레임을 추출한 초기 로딩 포스터 (약 50 KB)
+- `assets/products/product-01.webp` ~ `product-38.webp`: 첨부 누끼 ZIP의 38종 실제 제품 이미지
+- `assets/media-manifest.json`: 7개 색상 그룹별 제품 매핑 (38종 중복·누락 없음)
+
+GitHub Actions의 일회성 분할 영상 업로드가 성공했고 임시 `.hero-parts` 파일은 정리됐습니다. 전체 사이트는 별도 빌드 과정 없이 `index.html`로 구동됩니다. 실제 배포는 사용하는 호스팅 환경의 자동배포 설정을 따릅니다.
+
+### 반응형·모션 확인 사항
+
+PC에서는 컬러별 제품 갤러리 좌우 화살표와 포인터 일시정지를, 모바일에서는 터치 스와이프와 자동 전환을 지원합니다. 스크롤 리빌, 이미지 패럴랙스, 진행 표시, 히어로 모션은 순수 CSS/JavaScript로 구현되며 `prefers-reduced-motion`을 지원합니다.
