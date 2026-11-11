@@ -36,7 +36,7 @@
 }
 .site-header .brand-logo{justify-self:start;flex:none;width:126px;height:82px}
 .site-header .brand-logo img{
-  width:102px;height:66px;left:0;top:1px;right:auto;bottom:auto;
+  width:90px;height:58px;left:0;top:-1px;right:auto;bottom:auto;
   object-fit:contain;object-position:left top
 }
 .site-header .desktop-nav{display:flex;justify-self:center;margin:0;gap:clamp(18px,2.65vw,49px)}
@@ -98,7 +98,7 @@
 .motion-ready .motion--curtain .portfolio-content{opacity:0;transform:translateY(calc(-50% + 16px));transition-delay:var(--motion-delay,0ms)}
 .motion-ready .motion--curtain.is-visible .portfolio-content{
   opacity:1;transform:translateY(-50%);
-  transition-delay:calc(var(--motion-delay,0ms) + 230ms)
+  transition-delay:0ms
 }
 .portfolio-card:hover .portfolio-content{transform:translateY(calc(-50% - 8px))}
 .portfolio-card::after{
@@ -134,7 +134,7 @@
 @media(max-width:1300px) and (min-width:1024px){
   .site-header .header-inner{gap:14px;padding-inline:clamp(22px,3vw,44px)}
   .site-header .brand-logo{width:108px;height:76px}
-  .site-header .brand-logo img{width:88px;height:56px}
+  .site-header .brand-logo img{width:80px;height:52px;top:-1px}
   .site-header .desktop-nav{gap:clamp(12px,1.4vw,19px)}
   .site-header .desktop-nav a{font-size:clamp(13px,1.2vw,16px)}
   .site-header .header-actions{gap:12px}
@@ -147,7 +147,7 @@
   .site-header .header-inner{grid-template-columns:minmax(0,1fr) max-content;padding-inline:24px;gap:12px}
   .site-header .desktop-nav{display:none}
   .site-header .brand-logo{width:112px;height:70px}
-  .site-header .brand-logo img{width:91px;height:58px;top:0}
+  .site-header .brand-logo img{width:78px;height:50px;top:-1px}
   .site-header .header-actions{gap:12px}
   .site-header .language-switch{height:38px;padding:3px}
   .site-header .language-switch button{height:30px;min-width:30px;font-size:12px}
@@ -166,7 +166,7 @@
 @media(max-width:600px){
   .site-header .header-inner{padding-inline:16px}
   .site-header .brand-logo{width:96px;height:66px}
-  .site-header .brand-logo img{width:77px;height:50px;top:1px}
+  .site-header .brand-logo img{width:68px;height:44px;top:-1px}
   .site-header .header-actions{gap:10px}
   .hero-content{bottom:clamp(112px,20svh,165px)}
   .hero-video{object-position:53% center}

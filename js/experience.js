@@ -1,5 +1,5 @@
 /* EVESEL motion engine: reusable CSS types / delay classes only.
-   One trigger rule for every element: its TOP reaches the viewport center.
+   Normal motion uses 50vh; the photo panels reveal at their IMAGE top reaching 90vh.
    OEM/ODM is triggered once as a group, so the CTA never waits independently. */
 (() => {
   'use strict';
@@ -40,19 +40,27 @@
   }
 
   const targets = [...document.querySelectorAll(
-    '.motion--fade-up,.motion--media,.motion--curtain,.motion--group'
+    '.motion--fade-up,.motion--media,.motion--group'
   )];
-  const motionEnabled = !reduce.matches && targets.length > 0;
+  const photoPanels = [...document.querySelectorAll('.portfolio-card.motion--curtain')];
+  const motionEnabled = !reduce.matches && (targets.length > 0 || photoPanels.length > 0);
   if (motionEnabled) document.documentElement.classList.add('motion-ready');
 
-  // A consistent rule: the TOP of an element crosses 50% viewport height.
-  // Never wait for the center of a tall card or for the last button itself.
-  const revealAtCenter = () => {
+  // Generic text/media starts at the viewport midpoint. Category curtains
+  // start when each IMAGE top reaches 90vh, irrespective of heading position.
+  // Panels in one row trigger simultaneously; mobile rows trigger separately.
+  const revealAtScrollPosition = () => {
     if (!motionEnabled) return;
-    const center = innerHeight * .5;
     for (const element of targets) {
-      if (element.classList.contains('is-visible')) continue;
-      if (element.getBoundingClientRect().top <= center) element.classList.add('is-visible');
+      if (!element.classList.contains('is-visible') &&
+          element.getBoundingClientRect().top <= innerHeight * .5)
+        element.classList.add('is-visible');
+    }
+    for (const card of photoPanels) {
+      if (card.classList.contains('is-visible')) continue;
+      const photo = card.querySelector('img');
+      if (photo && photo.getBoundingClientRect().top <= innerHeight * .9)
+        card.classList.add('is-visible');
     }
   };
 
@@ -61,7 +69,7 @@
     frameRequested = false;
     const y = scrollY || 0;
     topLink?.classList.toggle('visible', y>1100);
-    revealAtCenter();
+    revealAtScrollPosition();
     if (reduce.matches) return;
     if (hero) {
       const shift=Math.min(y,hero.offsetHeight);
