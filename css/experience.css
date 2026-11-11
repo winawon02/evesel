@@ -127,41 +127,79 @@
 }
 .motion-enabled .portfolio-heading h2.motion-item.is-visible{opacity:1;transform:none}
 
-/* Curtain is an actual opaque layer that slides toward the right, revealing the photo.
-   No-JS / reduced-motion path defaults to photos fully visible. */
-.portfolio-card{isolation:isolate}
-.portfolio-card::before{
-  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
-  background:#e9eef0;transform:scaleX(0);transform-origin:right center;
+/* Directional photographic curtains: no solid-colour panel before reveal.
+   The blurred copy of each *same* photo is the cover, so no blank colour flashes.
+   Odd cards reveal from TOP to BOTTOM; even cards from BOTTOM to TOP. */
+.portfolio-card{
+  isolation:isolate;
+  border-right:0!important;
+  background:#333;
+  --panel-photo:url("../assets/category-color.jpg");
 }
-.motion-enabled .portfolio-card::before{
-  transform:scaleX(1);
-  transition:transform 1.35s cubic-bezier(.76,0,.19,1);
+.portfolio-card:nth-child(1){--panel-photo:url("../assets/category-color.jpg")}
+.portfolio-card:nth-child(2){--panel-photo:url("../assets/category-perm.jpg")}
+.portfolio-card:nth-child(3){--panel-photo:url("../assets/category-care.jpg")}
+.portfolio-card:nth-child(4){--panel-photo:url("../assets/category-styling.jpg")}
+/* This photographic preview remains visible during the closed-curtain state. */
+.portfolio-card::before{
+  content:"";position:absolute;inset:-12px;z-index:0;pointer-events:none;
+  background-image:var(--panel-photo);background-position:center;background-size:cover;
+  filter:blur(11px) brightness(.72) saturate(.8);transform:scale(1.055);
+  transition:none;
+}
+.portfolio-card>img{
+  position:absolute;inset:0;z-index:1;display:block;visibility:visible;opacity:1;
+  width:100%;height:100%;object-fit:cover;
+  clip-path:inset(0 0 0 0);transform:scale(1.075);
+  transition:clip-path 1.45s cubic-bezier(.76,0,.18,1),transform 1.6s var(--motion-ease);
+}
+.motion-enabled .portfolio-card:nth-child(odd)>img{clip-path:inset(0 0 100% 0)}
+.motion-enabled .portfolio-card:nth-child(even)>img{clip-path:inset(100% 0 0 0)}
+.motion-enabled .portfolio-card.is-visible>img{
+  clip-path:inset(0 0 0 0);
+  transform:scale(1.01);
   transition-delay:var(--curtain-delay,0ms);
 }
-.motion-enabled .portfolio-card.is-visible::before{transform:scaleX(0)}
-.portfolio-card>img{transform:scale(1.105);transition:transform 1.65s var(--motion-ease)}
-.portfolio-card.is-visible>img{transform:scale(1.01)}
-.portfolio-card:hover>img{transform:scale(1.08)}
+.portfolio-card:hover>img{transform:scale(1.055)}
+/* Divider draws AFTER the photograph has been revealed; never visible beforehand. */
+.portfolio-card::after{
+  content:"";position:absolute;inset:0 0 0 auto;z-index:3;pointer-events:none;
+  width:1px;background:rgba(255,255,255,.72);
+  opacity:0;transform:scaleY(0);transform-origin:top;
+  transition:opacity .38s ease,transform .65s var(--motion-ease);
+}
+.portfolio-card:not(:last-child).is-visible::after{
+  opacity:1;transform:scaleY(1);
+  transition-delay:calc(var(--curtain-delay,0ms) + 1.15s);
+}
+.portfolio-overlay{z-index:2;pointer-events:none}
 .portfolio-content{
-  top:50%;bottom:auto;transform:translateY(-50%);
-  z-index:4;transition:transform .65s var(--motion-ease),opacity .75s var(--motion-ease);
+  top:50%;bottom:auto;z-index:4;
+  transform:translateY(-50%);
+  transition:opacity .75s var(--motion-ease),transform .85s var(--motion-ease);
 }
 .portfolio-card:hover .portfolio-content{transform:translateY(calc(-50% - 8px))}
 .motion-enabled .portfolio-card .portfolio-content{
   opacity:0;transform:translateY(calc(-50% + 20px));
-  transition:opacity .7s var(--motion-ease),transform .85s var(--motion-ease);
 }
 .motion-enabled .portfolio-card.is-visible .portfolio-content{
   opacity:1;transform:translateY(-50%);
-  transition-delay:calc(var(--curtain-delay,0ms) + .58s);
+  transition-delay:calc(var(--curtain-delay,0ms) + .55s);
 }
 .motion-enabled .portfolio-card.is-visible:hover .portfolio-content{
   transform:translateY(calc(-50% - 8px));
 }
-/* No motion on category captions until the curtain actually uncovers them. */
-.portfolio-overlay{z-index:1}
+/* The reveal marker stays at the CENTER of the panel, instead of its top edge. */
+.portfolio-scroll-marker{
+  position:absolute;z-index:0;top:50%;left:50%;width:2px;height:2px;
+  pointer-events:none;
+}
 
+@media(max-width:1023px){
+  .portfolio-card::after{width:100%;height:1px;top:auto;bottom:0;left:0;right:0;
+    transform:scaleX(0);transform-origin:left}
+  .portfolio-card:not(:last-child).is-visible::after{transform:scaleX(1)}
+}
 @media(max-width:600px){
   .hero{height:100svh;min-height:0}
   .hero-content{bottom:clamp(112px,20svh,165px)}
@@ -178,4 +216,12 @@
   .motion-enabled .portfolio-card .portfolio-content{
     opacity:1!important;transform:translateY(-50%)!important;transition:none!important
   }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .portfolio-card>img,.motion-enabled .portfolio-card:nth-child(odd)>img,
+  .motion-enabled .portfolio-card:nth-child(even)>img{clip-path:none!important;transform:none!important;transition:none!important}
+  .portfolio-card::before{display:none!important}
+  .portfolio-card:not(:last-child)::after{opacity:1!important;transform:none!important;transition:none!important}
+  .portfolio-content,.motion-enabled .portfolio-card .portfolio-content{opacity:1!important;transform:translateY(-50%)!important;transition:none!important}
 }

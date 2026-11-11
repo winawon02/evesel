@@ -56,6 +56,13 @@
   const reveals = [...new Set(revealSelectors.flatMap(selector =>
     Array.from(document.querySelectorAll(selector))))];
   const categories = Array.from(document.querySelectorAll('.portfolio-card'));
+  const categoryMarkers=categories.map(card=>{
+    const marker=document.createElement('span');
+    marker.className='portfolio-scroll-marker';
+    marker.setAttribute('aria-hidden','true');
+    card.appendChild(marker);
+    return marker;
+  });
   const imageLayers = Array.from(document.querySelectorAll('.split-photo img, .manufacturing-card > img'));
 
   if (motionAllowed && hasObserver) {
@@ -75,7 +82,17 @@
         entranceObserver.unobserve(entry.target);
       }
     }, observerOptions);
-    for (const element of [...reveals,...categories]) entranceObserver.observe(element);
+    for (const element of reveals) entranceObserver.observe(element);
+    // Observe the center of each large panel, not its upper visible edge.
+    const curtainObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        const card = entry.target.closest('.portfolio-card');
+        if (card) card.classList.add('is-visible');
+        curtainObserver.unobserve(entry.target);
+      });
+    }, {root:null,rootMargin:'-32% 0px -32% 0px',threshold:0});
+    categoryMarkers.forEach(marker => curtainObserver.observe(marker));
   }
 
   let framePending=false;
@@ -92,7 +109,16 @@
     const y=scrollY||0;
     topLink?.classList.toggle('visible', y > 1100);
     if (!reducedMotion.matches) {
-      if (motionAllowed && hasObserver) [...reveals,...categories].forEach(revealAtCenter);
+      if (motionAllowed && hasObserver) {
+        reveals.forEach(revealAtCenter);
+        categories.forEach(card => {
+          if (card.classList.contains('is-visible')) return;
+          const b=card.getBoundingClientRect();
+          const center=b.top+b.height*.5;
+          if ((center>=innerHeight*.32 && center<=innerHeight*.68) || b.bottom<=innerHeight*.15)
+            card.classList.add('is-visible');
+        });
+      }
       if (manufacturing) {
         const box=manufacturing.getBoundingClientRect();
         if (box.bottom>0 && box.top<innerHeight) {
