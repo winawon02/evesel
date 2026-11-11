@@ -47,3 +47,4 @@ README.md
 - 모바일에서는 스티키를 해제하고 기존 모바일 Penpot 레이아웃을 사용합니다. 모션 감소 설정 대응.
 - 미디어: `assets/hero-loop.mp4`, `assets/hero-poster.webp`, `assets/products/product-01.webp` ~ `product-38.webp`.
 
+\n## 2026-11-11 제품 노출 및 카테고리 이미지 가시성 수정\n\n- 메인 2섹션: 상자 패키지 6종(04,29,32,33,34,37) 및 The Nature 파우치의 오른쪽 컬러 라벨 부착 3종(19,20,21)을 **노출에서 제외**. 실제 제품 29개만 기존 한 줄 자동 롤링으로 표시합니다. 원본 리소스는 추후 활용을 위해 보존합니다.\n- 메인 3섹션: 이미지가 보이지 않던 위험 요소인 `clip-path:inset(100%)` 및 콘텐츠 가림 의존성을 제거했습니다. 헤어칼라·퍼머넌트·헤어케어·스타일링 원본 사진 4장을 기본으로 항상 표시하고, 스크롤 진입 시 사진 확대율만 자연스럽게 변화시킵니다.\n- `assets/media-manifest.json`의 `home_display_count`/`home_excluded`/`home_order`에 현재 메인 노출 목록을 기록했습니다.\n

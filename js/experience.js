@@ -44,7 +44,7 @@
   }
 
   const selectors = [
-    '.brand-heading','.product-marquee','.portfolio-heading','.portfolio-card',
+    '.brand-heading','.product-marquee','.portfolio-heading',
     '.oem-section .split-copy','.oem-option','.oem-section .split-photo',
     '.manufacturing-inner h2','.manufacturing-card',
     '.research-section .split-copy','.research-section .split-photo',
@@ -52,6 +52,18 @@
   ];
   const animated = [...new Set(selectors.flatMap(s=>Array.from(document.querySelectorAll(s))))];
   const imageLayers = [...document.querySelectorAll('.split-photo img,.manufacturing-card>img')];
+  // Category cards must NEVER be concealed pending an IntersectionObserver callback.
+  // All four photos are visible by default; observation only animates image scale.
+  if (!motionOff.matches && 'IntersectionObserver' in window) {
+    const categoryObserver = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        categoryObserver.unobserve(entry.target);
+      });
+    }, {threshold:0.01,rootMargin:'0px 0px 8% 0px'});
+    document.querySelectorAll('.portfolio-card').forEach(card => categoryObserver.observe(card));
+  }
   if ('IntersectionObserver' in window && !motionOff.matches) {
     const observer = new IntersectionObserver(entries => entries.forEach(entry => {
       if (!entry.isIntersecting) return;
