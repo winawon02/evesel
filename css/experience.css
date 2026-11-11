@@ -203,3 +203,14 @@
   .portfolio-card::after{opacity:1!important;transform:none!important;transition:none!important}
   .split-photo img,.manufacturing-card>img,.manufacturing-bg{transform:none!important}
 }
+
+/* 2026-11-11 — Always-white substrate behind hair-colour and all
+   category photographs, including the moment before the curtain opens. */
+.portfolio-section,.portfolio-heading,.portfolio-grid{background-color:#fff}
+.portfolio-grid .portfolio-card{background-color:#fff!important}
+/* Last contact section is intentionally static; no scroll entrance. */
+.contact-section .contact-inner,
+.motion-ready .contact-section .contact-inner{
+  opacity:1!important;transform:none!important;filter:none!important;
+  clip-path:none!important;animation:none!important;transition:none!important
+}
