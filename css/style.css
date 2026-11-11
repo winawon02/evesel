@@ -219,7 +219,8 @@ body.menu-open{overflow:hidden}
   .portfolio-content small{font-size:16px}.portfolio-content strong{font-size:35px}
   .circle-arrow{width:46px;height:46px;font-size:27px;margin-top:18px}
   .oem-section,.research-section{display:flex;flex-direction:column;min-height:0}
-  .oem-section .split-photo{height:310px;flex-shrink:0}\n  .oem-section .split-copy{min-height:770px}
+  .oem-section .split-photo{height:310px;flex-shrink:0}
+  .oem-section .split-copy{min-height:770px}
   .split-copy{padding:44px 24px 62px;width:100%}
   .split-copy h2{font-size:32px;line-height:1.4}
   .section-description{font-size:16px;line-height:1.72;margin-top:26px}
