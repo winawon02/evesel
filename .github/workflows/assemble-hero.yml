@@ -1,0 +1,39 @@
+name: Assemble EVESEL hero film
+on:
+  push:
+    paths:
+      - 'assets/.hero-parts/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Reassemble and verify original video bytes
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          parts=(assets/.hero-parts/hero-*.part)
+          if [ "${#parts[@]}" -ne 12 ]; then
+            echo "Expected 12 numbered video chunks, got ${#parts[@]}" >&2
+            exit 1
+          fi
+          cat "${parts[@]}" > assets/hero-loop.mp4
+          echo "3113a75f9e6bbb38cc09ad7ec1955ba74810bd38c1c8595a526d523014ffea34  assets/hero-loop.mp4" | sha256sum --check --status
+          test "$(stat -c%s assets/hero-loop.mp4)" -eq 6663140
+      - name: Commit hero video and clean temporary parts
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/hero-loop.mp4
+          git rm -r assets/.hero-parts
+          if ! git diff --cached --quiet; then
+            git commit -m "assets: assemble optimized 1080p EVESEL hero video"
+            git push origin HEAD:main
+          fi
