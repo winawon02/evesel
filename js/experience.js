@@ -8,11 +8,13 @@
   const progress = document.querySelector('.scroll-progress');
   const topLink = document.querySelector('.back-to-top');
   const groups = [
-    { name:'블러쉬 & 핑크', en:'BLUSH & PINK', bg:'#f9eeed', ink:'#a86878', items:[5,6,14,25,26,27,28,29,30,32,36,37] },
-    { name:'아쿠아 & 민트', en:'AQUA & MINT', bg:'#eaf6f3', ink:'#347c77', items:[17,19,20,22,24,33] },
-    { name:'오프화이트 & 크림', en:'WHITE & CREAM', bg:'#f5f1ea', ink:'#877766', items:[10,12,13,15,16,18,21,23,31,34,35,38] },
-    { name:'블루 & 코발트', en:'BLUE & COBALT', bg:'#eaf0f9', ink:'#486ca4', items:[1,7,11] },
-    { name:'골드 & 다크', en:'GOLD & DARK', bg:'#f4eee7', ink:'#947148', items:[2,3,4,8,9] }
+    { name:'핑크 & 코랄', en:'PINK & CORAL', bg:'#faeeee', ink:'#c37586', items:[14,25,26,27,28,29,30,32,36,37] },
+    { name:'민트 & 터쿼이즈', en:'MINT & TURQUOISE', bg:'#e9f6f3', ink:'#3e928a', items:[17,19,20,22,24,33] },
+    { name:'크림 & 베이지', en:'CREAM & BEIGE', bg:'#f5f0e7', ink:'#9b8465', items:[13,18,21,34,35,38] },
+    { name:'화이트 & 실버', en:'WHITE & SILVER', bg:'#f0f2f3', ink:'#71858f', items:[10,12,15,16,23,31] },
+    { name:'블루 & 코발트', en:'BLUE & COBALT', bg:'#e9effa', ink:'#4168a7', items:[1,7,11] },
+    { name:'골드 & 브론즈', en:'GOLD & BRONZE', bg:'#f6eee2', ink:'#af8751', items:[2,3,4,8] },
+    { name:'블랙 & 차콜', en:'BLACK & CHARCOAL', bg:'#ececef', ink:'#65646d', items:[5,6,9] }
   ];
   const pad = n => String(n).padStart(2,'0');
 

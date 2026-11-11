@@ -39,18 +39,19 @@ README.md
 
 ## 2026-11-11 영상·제품 컬러 갤러리 업데이트
 
-- `js/experience.js` / `css/experience.css`: 히어로 영상 제어, PC·모바일 스크롤 리빌/패럴랙스, 컬러 그룹 갤러리(좌우 버튼/터치/키보드), 스크롤 진행 표시.
-- `index.html`: 히어로에서 `assets/hero-loop.mp4`를 자동재생·무음·반복·인라인 배경으로 사용하고 `assets/hero-poster.webp`를 포스터로 표시합니다.
-- `assets/media-manifest.json`: ZIP 원본 38종을 패키지 색상 기준 5개 그룹으로 배치한 순서입니다.
-- 움직임 줄이기 설정에서는 애니메이션을 비활성화하고, 데이터 절약 설정에서는 영상 재생을 생략합니다.
-- 참고 사이트 동남기업의 스크롤 모션을 디자인 방향으로 참고하되 기술적으로 의존하지 않는 순수 JavaScript + CSS 구현입니다.
+- 메인 히어로: 15초 MP4 자동 재생(무음, 반복) + 전용 WebP 포스터 + 정지 이미지 폴백.
+- 38종 실제 제품 누끼: 패키지 컬러 기준 **핑크·민트·크림·화이트·블루·골드·블랙 7개 그룹**. 38종의 번호와 배치는 `assets/media-manifest.json`에서 확인.
+- 모바일 터치 스와이프/PC 화살표·키보드 탐색·자동 전환(사용 중 자동 일시중지).
+- 스크롤 섹션 순차 등장, 클리핑 리빌, 이미지 패럴랙스, 상단 진행 표시, 히어로 텍스트 모션.
+- 사용자의 모션 감소 설정 및 데이터 절약 설정을 존중합니다.
 
-**미디어 파일 업로드 필요:** GitHub 커넥터가 이 작업의 MP4/WebP 바이너리 파일을 직접 전송할 수 없어 코드와 매니페스트만 먼저 커밋했습니다. 별도로 제공된 `EVESEL_media_assets.zip`을 압축 해제하여 저장소 루트에 `assets/` 구조를 그대로 복사한 후 아래를 실행하세요.
+### 중요한 미디어 설치 안내
+
+`assets/hero-loop.mp4`, `assets/hero-poster.webp`, `assets/products/product-01.webp`~`product-38.webp`는 **대용량 바이너리 파일**입니다. 미디어 ZIP을 저장소 루트에서 압축 해제하여 업로드해야 실제 파일이 표시됩니다. 그 전에는 기존 `hero.jpg`와 `product-XX.png`가 폴백으로 사용됩니다.
 
 ```sh
-git add assets/hero-loop.mp4 assets/hero-poster.webp assets/products
-git commit -m "assets: add hero film and 38 product photos"
-git push origin main
+# 제공된 EVESEL_media_assets.zip을 압축 해제하여 assets/ 경로 복사 후
+ git add assets/hero-loop.mp4 assets/hero-poster.webp assets/products
+ git commit -m "assets: add EVESEL hero film and 38 product images"
+ git push origin main
 ```
-
-미디어가 없더라도 기존 `hero.jpg` 배경 및 `product-01.png` 등 기존 제품 이미지로 대체 표시되도록 구성했습니다. **그러나 실제 첨부 영상 및 38종 이미지는 위 바이너리 업로드를 완료해야 공개 사이트에 표시됩니다.**
