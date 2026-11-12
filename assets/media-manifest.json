@@ -2,7 +2,7 @@
   "hero": {
     "video": "assets/hero-loop.mp4",
     "poster": "assets/hero-poster.webp",
-    "duration_seconds": 15,
+    "duration_seconds": 12.07,
     "resolution": "1920x1080"
   },
   "products": {
