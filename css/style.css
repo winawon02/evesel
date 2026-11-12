@@ -487,9 +487,33 @@ body.menu-open {
 .portfolio-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.18) 45%,rgba(0,0,0,.48));
+  /* Keep a light gradient over the playing video so white titles remain legible. */
+  background: linear-gradient(180deg,rgba(0,0,0,.12),rgba(0,0,0,.20) 45%,rgba(0,0,0,.35));
   z-index: 2;
   pointer-events: none;
+}
+/* Additional black tint for static posters; fade it away on desktop hover. */
+.portfolio-overlay::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,.42);
+  opacity: 1;
+  transition: opacity .35s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .portfolio-card:hover .portfolio-overlay::before {
+    opacity: 0;
+  }
+}
+.portfolio-card.is-playing .portfolio-overlay::before,
+.portfolio-card:focus-within .portfolio-overlay::before {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-overlay::before {
+    transition: none;
+  }
 }
 .portfolio-content {
   position: absolute;
