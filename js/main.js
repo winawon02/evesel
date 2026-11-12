@@ -158,34 +158,54 @@
   }, { passive: true });
 
 
-  // Main portfolio: show an extracted poster at rest and play only on desktop hover.
-  // Lazy source assignment avoids downloading four films during initial page load.
+  // Portfolio films: desktop plays on hover; responsive mobile cards loop while visible.
+  // Sources stay lazy so offscreen cards do not download videos unnecessarily.
   const portfolioCards = [...document.querySelectorAll(".portfolio-card")];
   const hoverPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const mobilePortfolio = window.matchMedia("(max-width: 1023px)");
   const saveData = Boolean(navigator.connection?.saveData);
+  const visiblePortfolioCards = new Set();
   let activePortfolioVideo = null;
 
-  const stopPortfolioVideo = video => {
+  const stopPortfolioVideo = (video, reset = false) => {
     if (!video) return;
     video.pause();
     video.closest(".portfolio-card")?.classList.remove("is-playing");
-    try { video.currentTime = 0; } catch (_) { /* Not seekable before metadata. */ }
+    if (reset) {
+      try { video.currentTime = 0; } catch (_) { /* Media may not be seekable yet. */ }
+    }
     if (activePortfolioVideo === video) activePortfolioVideo = null;
   };
 
-  const startPortfolioVideo = card => {
-    if (!hoverPointer.matches || reducedMotion.matches || saveData || document.hidden) return;
+  const startPortfolioVideo = (card, onMobile = false) => {
+    if (reducedMotion.matches || saveData || document.hidden) return;
+    if (onMobile ? !mobilePortfolio.matches : (!hoverPointer.matches || mobilePortfolio.matches)) return;
     const video = card.querySelector(".portfolio-video");
     if (!video) return;
-    if (activePortfolioVideo && activePortfolioVideo !== video) stopPortfolioVideo(activePortfolioVideo);
+    if (onMobile && !visiblePortfolioCards.has(card)) return;
+    if (!onMobile && activePortfolioVideo && activePortfolioVideo !== video) {
+      stopPortfolioVideo(activePortfolioVideo, true);
+    }
     const source = video.querySelector("source[data-src]");
-    if (source && !source.src) {
+    if (source && !source.getAttribute("src")) {
       source.src = source.dataset.src;
       video.load();
     }
-    activePortfolioVideo = video;
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    if (!onMobile) activePortfolioVideo = video;
     const playAttempt = video.play();
     playAttempt?.catch?.(() => stopPortfolioVideo(video));
+  };
+
+  const stopAllPortfolioVideos = () => {
+    portfolioCards.forEach(card => stopPortfolioVideo(card.querySelector(".portfolio-video")));
+  };
+
+  const playVisibleMobileCards = () => {
+    if (!mobilePortfolio.matches || document.hidden || reducedMotion.matches || saveData) return;
+    visiblePortfolioCards.forEach(card => startPortfolioVideo(card, true));
   };
 
   portfolioCards.forEach(card => {
@@ -200,36 +220,83 @@
     const video = card.querySelector(".portfolio-video");
     if (!video) return;
     video.addEventListener("playing", () => {
-      if (activePortfolioVideo === video) card.classList.add("is-playing");
-      else video.pause();
+      const mobileActive = mobilePortfolio.matches && visiblePortfolioCards.has(card);
+      if ((mobileActive || activePortfolioVideo === video) && !document.hidden) {
+        card.classList.add("is-playing");
+      } else {
+        stopPortfolioVideo(video);
+      }
     });
     video.addEventListener("error", () => stopPortfolioVideo(video));
     video.addEventListener("pointerdown", event => event.preventDefault());
     card.addEventListener("pointerenter", event => {
-      if (event.pointerType === "mouse" || event.pointerType === "pen") startPortfolioVideo(card);
+      if (!mobilePortfolio.matches && (event.pointerType === "mouse" || event.pointerType === "pen")) {
+        startPortfolioVideo(card);
+      }
     });
-    card.addEventListener("pointerleave", () => stopPortfolioVideo(video));
-    card.addEventListener("focusin", () => startPortfolioVideo(card));
+    card.addEventListener("pointerleave", () => {
+      if (!mobilePortfolio.matches) stopPortfolioVideo(video, true);
+    });
+    card.addEventListener("focusin", () => {
+      if (!mobilePortfolio.matches) startPortfolioVideo(card);
+    });
     card.addEventListener("focusout", () => {
       requestAnimationFrame(() => {
-        if (!card.contains(document.activeElement)) stopPortfolioVideo(video);
+        if (!mobilePortfolio.matches && !card.contains(document.activeElement)) {
+          stopPortfolioVideo(video, true);
+        }
       });
     });
   });
-  document.addEventListener("visibilitychange", () => {
-    if (document.hidden) stopPortfolioVideo(activePortfolioVideo);
-  });
-  reducedMotion.addEventListener?.("change", () => {
-    if (reducedMotion.matches) stopPortfolioVideo(activePortfolioVideo);
-  });
+
+  // Auto-play each visible card on mobile, with sound off and inline playback on iOS.
   if ("IntersectionObserver" in window) {
     const cardObserver = new IntersectionObserver(entries => {
-      for (const entry of entries) {
-        if (!entry.isIntersecting) stopPortfolioVideo(entry.target.querySelector(".portfolio-video"));
-      }
+      entries.forEach(entry => {
+        const card = entry.target;
+        if (entry.isIntersecting) {
+          visiblePortfolioCards.add(card);
+          if (mobilePortfolio.matches) startPortfolioVideo(card, true);
+        } else {
+          visiblePortfolioCards.delete(card);
+          stopPortfolioVideo(card.querySelector(".portfolio-video"));
+        }
+      });
     }, { threshold: 0.01 });
     portfolioCards.forEach(card => cardObserver.observe(card));
+  } else {
+    const checkVisibleCards = () => {
+      if (!mobilePortfolio.matches) return;
+      portfolioCards.forEach(card => {
+        const box = card.getBoundingClientRect();
+        const visible = box.bottom > 0 && box.top < window.innerHeight;
+        if (visible) {
+          visiblePortfolioCards.add(card);
+          startPortfolioVideo(card, true);
+        } else {
+          visiblePortfolioCards.delete(card);
+          stopPortfolioVideo(card.querySelector(".portfolio-video"));
+        }
+      });
+    };
+    window.addEventListener("scroll", checkVisibleCards, { passive: true });
+    window.addEventListener("resize", checkVisibleCards, { passive: true });
+    checkVisibleCards();
   }
+
+  // Restore mobile playback when returning to the page or switching breakpoints.
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) stopAllPortfolioVideos();
+    else playVisibleMobileCards();
+  });
+  reducedMotion.addEventListener?.("change", () => {
+    if (reducedMotion.matches) stopAllPortfolioVideos();
+    else playVisibleMobileCards();
+  });
+  mobilePortfolio.addEventListener?.("change", () => {
+    stopAllPortfolioVideos();
+    playVisibleMobileCards();
+  });
 
   syncHeader();
 })();
