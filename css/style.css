@@ -1615,3 +1615,27 @@ body.page-detail {
     height: 44px;
   }
 }
+
+
+/* Portfolio hover film: static poster by default; video fades in only while playing. */
+.portfolio-card > .portfolio-poster {
+  z-index: 0;
+}
+.portfolio-card > .portfolio-video {
+  display: block;
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  z-index: 1;
+  pointer-events: none;
+  transition: opacity .3s ease;
+}
+.portfolio-card.is-playing > .portfolio-video {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .portfolio-card > .portfolio-video { transition: none; }
+}
