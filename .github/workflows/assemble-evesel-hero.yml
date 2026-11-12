@@ -1,0 +1,30 @@
+name: Assemble EVESEL hero video
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'assets/hero-parts/part00.bin'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  assemble:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Assemble and validate the MP4
+        shell: bash
+        run: |
+          cat assets/hero-parts/part{00..09}.bin > assets/hero-loop.mp4
+          test "$(wc -c < assets/hero-loop.mp4)" -eq 3743863
+          echo "e7c30e736299f02a7e704a3b458cba53a351c03e50262472eb9a321f742577e5  assets/hero-loop.mp4" | sha256sum -c -
+      - name: Commit updated hero video
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/hero-loop.mp4
+          if ! git diff --cached --quiet; then
+            git commit -m "Replace hero-loop.mp4 with finalized blue-hands video"
+            git push
+          fi
