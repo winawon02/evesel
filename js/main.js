@@ -167,12 +167,49 @@
   const visiblePortfolioCards = new Set();
   let activePortfolioVideo = null;
 
+  // The hair-color film opens on the pink transition, never on its opening black-hair shot.
+  // Use that exact video frame as the still poster instead of an unrelated thumbnail.
+  const portfolioStartTime = video => {
+    const requested = Number(video?.closest(".portfolio-card")?.dataset.videoStart || 0);
+    if (!Number.isFinite(requested) || requested <= 0) return 0;
+    return Number.isFinite(video.duration)
+      ? Math.min(requested, Math.max(0, video.duration - 0.15))
+      : requested;
+  };
+
+  const loadPortfolioSource = video => {
+    const source = video.querySelector("source[data-src]");
+    if (source && !source.getAttribute("src")) {
+      source.src = source.dataset.src;
+      video.load();
+    }
+  };
+
+  const capturePortfolioFirstFrame = (card, video) => {
+    if (card.dataset.captureFirstFrame !== "true" || card.dataset.framePosterReady === "true") return;
+    if (video.readyState < HTMLMediaElement.HAVE_CURRENT_DATA || !video.videoWidth) return;
+    if (Math.abs(video.currentTime - portfolioStartTime(video)) > 0.12) return;
+    try {
+      const canvas = document.createElement("canvas");
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext("2d").drawImage(video, 0, 0);
+      const frame = canvas.toDataURL("image/webp", 0.9);
+      const image = card.querySelector(".portfolio-poster");
+      if (image) image.src = frame;
+      video.poster = frame;
+      card.dataset.framePosterReady = "true";
+    } catch (_) {
+      // Keep the existing image if a browser disallows video-frame capture.
+    }
+  };
+
   const stopPortfolioVideo = (video, reset = false) => {
     if (!video) return;
     video.pause();
     video.closest(".portfolio-card")?.classList.remove("is-playing");
     if (reset) {
-      try { video.currentTime = 0; } catch (_) { /* Media may not be seekable yet. */ }
+      try { video.currentTime = portfolioStartTime(video); } catch (_) { /* Media may not be seekable yet. */ }
     }
     if (activePortfolioVideo === video) activePortfolioVideo = null;
   };
@@ -186,17 +223,36 @@
     if (!onMobile && activePortfolioVideo && activePortfolioVideo !== video) {
       stopPortfolioVideo(activePortfolioVideo, true);
     }
-    const source = video.querySelector("source[data-src]");
-    if (source && !source.getAttribute("src")) {
-      source.src = source.dataset.src;
-      video.load();
-    }
+    loadPortfolioSource(video);
     video.muted = true;
-    video.loop = true;
+    video.loop = portfolioStartTime(video) === 0;
     video.playsInline = true;
     if (!onMobile) activePortfolioVideo = video;
-    const playAttempt = video.play();
-    playAttempt?.catch?.(() => stopPortfolioVideo(video));
+
+    const playWhenActive = () => {
+      const active = onMobile
+        ? mobilePortfolio.matches && visiblePortfolioCards.has(card)
+        : !mobilePortfolio.matches && activePortfolioVideo === video;
+      if (!active || document.hidden) return;
+      const playAttempt = video.play();
+      playAttempt?.catch?.(() => stopPortfolioVideo(video));
+    };
+
+    const playFromStart = () => {
+      const start = portfolioStartTime(video);
+      if (start > 0 && (video.currentTime < start - 0.06 || video.ended)) {
+        video.addEventListener("seeked", playWhenActive, { once: true });
+        try { video.currentTime = start; } catch (_) { playWhenActive(); }
+      } else {
+        playWhenActive();
+      }
+    };
+
+    if (portfolioStartTime(video) > 0 && video.readyState < HTMLMediaElement.HAVE_METADATA) {
+      video.addEventListener("loadedmetadata", playFromStart, { once: true });
+    } else {
+      playFromStart();
+    }
   };
 
   const stopAllPortfolioVideos = () => {
@@ -213,12 +269,44 @@
     const posterUrl = image?.dataset.videoPoster;
     if (image && posterUrl) {
       const poster = new Image();
-      poster.onload = () => { image.src = posterUrl; };
+      poster.onload = () => { if (card.dataset.framePosterReady !== "true") image.src = posterUrl; };
       poster.src = posterUrl;
     }
 
     const video = card.querySelector(".portfolio-video");
     if (!video) return;
+
+    if (card.dataset.captureFirstFrame === "true") {
+      // A small, same-origin video is pre-seeked once so the initial still is its
+      // actual first visible frame (also used before hover on mobile).
+      video.addEventListener("seeked", () => capturePortfolioFirstFrame(card, video));
+      video.addEventListener("loadeddata", () => capturePortfolioFirstFrame(card, video));
+      const preparePoster = () => {
+        if (card.dataset.framePosterReady === "true") return;
+        const start = portfolioStartTime(video);
+        if (video.paused && start > 0 && Math.abs(video.currentTime - start) > 0.06) {
+          try { video.currentTime = start; } catch (_) { /* Not seekable yet. */ }
+        } else {
+          capturePortfolioFirstFrame(card, video);
+        }
+      };
+      video.addEventListener("loadedmetadata", preparePoster);
+      loadPortfolioSource(video);
+      if (video.readyState >= HTMLMediaElement.HAVE_METADATA) preparePoster();
+
+      // The HTML loop attribute restarts at zero, so loop only the pink portion.
+      video.addEventListener("ended", () => {
+        if (card.classList.contains("is-playing") && !document.hidden) {
+          video.addEventListener("seeked", () => {
+            if (card.classList.contains("is-playing") && !document.hidden) {
+              video.play()?.catch?.(() => stopPortfolioVideo(video));
+            }
+          }, { once: true });
+          video.currentTime = portfolioStartTime(video);
+        }
+      });
+    }
+
     video.addEventListener("playing", () => {
       const mobileActive = mobilePortfolio.matches && visiblePortfolioCards.has(card);
       if ((mobileActive || activePortfolioVideo === video) && !document.hidden) {
